@@ -4,11 +4,13 @@ import BreakingTicker from '../components/BreakingTicker.jsx';
 import { api } from '../services/api.js';
 import { useLanguage } from '../contexts/LanguageContext.jsx';
 import { useDate } from '../contexts/DateContext.jsx';
+import { todayInput } from '../utils/date.js';
 
 const HomePage = () => {
   const { language } = useLanguage();
   const isTelugu = language === 'te';
   const { selectedDate } = useDate();
+  const isPreviousEdition = selectedDate !== todayInput();
   const [articles, setArticles] = useState([]);
   const [breaking, setBreaking] = useState([]);
   const [featured, setFeatured] = useState(null);
@@ -81,6 +83,11 @@ const HomePage = () => {
 
   return (
     <main className="page">
+      {isPreviousEdition ? (
+        <div className="edition-banner">
+          {isTelugu ? 'పాత సంచిక:' : 'Previous Edition:'} {selectedDate}
+        </div>
+      ) : null}
       <BreakingTicker items={breaking} />
       <section className="page-header">
         <h1>{isTelugu ? 'హోమ్ వార్తలు' : 'Home News'}</h1>

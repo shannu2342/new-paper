@@ -8,6 +8,7 @@ const AdminLogin = ({ onSuccess }) => {
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  const [seeding, setSeeding] = useState(false);
 
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -27,6 +28,23 @@ const AdminLogin = ({ onSuccess }) => {
     }
   };
 
+  const handleSeed = async () => {
+    setError('');
+    setSeeding(true);
+    try {
+      const { token } = await authApi.seed({ username: 'admin', password: 'admin123' });
+      localStorage.setItem('admin-token', token);
+      if (onSuccess) {
+        onSuccess();
+      }
+      navigate('/admin');
+    } catch (err) {
+      setError(err.message || 'Seed failed');
+    } finally {
+      setSeeding(false);
+    }
+  };
+
   return (
     <main className="page admin-page">
       <h1>Admin Login (అడ్మిన్ లాగిన్)</h1>
@@ -42,6 +60,9 @@ const AdminLogin = ({ onSuccess }) => {
         {error ? <div className="form-error">{error}</div> : null}
         <button type="submit" disabled={loading}>
           {loading ? 'Please wait...' : 'Login'}
+        </button>
+        <button type="button" className="secondary" onClick={handleSeed} disabled={seeding}>
+          {seeding ? 'Creating admin...' : 'Create Admin (admin/admin123)'}
         </button>
       </form>
     </main>

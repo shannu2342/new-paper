@@ -71,6 +71,7 @@ a {
   background: rgba(255, 255, 255, 0.12);
   color: var(--header-text);
   font-weight: 700;
+  margin-left: auto;
 }
 
 .brand-logo {
@@ -159,6 +160,8 @@ a {
   display: flex;
   justify-content: flex-end;
   margin-top: 10px;
+  gap: 10px;
+  align-items: center;
 }
 
 .language-select {
@@ -215,6 +218,16 @@ a {
   border-radius: 14px;
   margin-bottom: 16px;
   overflow: hidden;
+}
+
+.edition-banner {
+  background: #fff1c7;
+  color: #1a1a1a;
+  padding: 8px 12px;
+  border-radius: 12px;
+  font-weight: 700;
+  margin-bottom: 12px;
+  border: 1px solid rgba(0, 0, 0, 0.1);
 }
 
 .ticker-label {
@@ -682,13 +695,12 @@ button:disabled {
   }
 
   .header-row {
-    flex-direction: column;
-    align-items: stretch;
+    flex-direction: row;
+    align-items: center;
   }
 
   .menu-toggle {
     display: inline-flex;
-    align-self: flex-end;
   }
 
   .nav-links {
@@ -698,6 +710,7 @@ button:disabled {
     background: rgba(255, 255, 255, 0.08);
     padding: 10px;
     border-radius: 12px;
+    width: 100%;
   }
 
   .nav-links.open {
@@ -710,6 +723,8 @@ button:disabled {
 
   .header-lower {
     justify-content: center;
+    flex-direction: row;
+    align-items: center;
   }
 
   .home-featured {
@@ -731,6 +746,28 @@ button:disabled {
 
   .footer-social {
     display: flex;
+  }
+
+  .admin-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .form-actions {
+    flex-direction: column;
+  }
+
+  .form-actions button {
+    width: 100%;
+  }
+
+  .inline-fields {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .admin-list button {
+    width: 100%;
   }
 }
 

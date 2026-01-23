@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { api } from '../services/api.js';
 import { useLanguage } from '../contexts/LanguageContext.jsx';
 import DateSelector from '../components/DateSelector.jsx';
@@ -9,6 +9,7 @@ const OtherPage = () => {
   const { language } = useLanguage();
   const isTelugu = language === 'te';
   const { selectedDate, setDate } = useDate();
+  const navigate = useNavigate();
   const [categories, setCategories] = useState([]);
   const [epaper, setEpaper] = useState(null);
 
@@ -33,7 +34,10 @@ const OtherPage = () => {
         <DateSelector
           label={isTelugu ? 'తేదీ ఎంచుకోండి' : 'Select Date'}
           value={selectedDate}
-          onChange={setDate}
+          onChange={(value) => {
+            setDate(value);
+            navigate('/');
+          }}
         />
       </section>
       <section className="other-actions">
