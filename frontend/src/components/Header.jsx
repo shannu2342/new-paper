@@ -99,11 +99,9 @@ const Header = () => {
       </div>
       <div className="header-lower">
         <div className="language-select">
-          <label htmlFor="language">
-            {isTelugu ? 'భాష' : 'Language'}
-          </label>
           <select
             id="language"
+            aria-label="Select language"
             value={language}
             onChange={(event) => setLanguage(event.target.value)}
           >

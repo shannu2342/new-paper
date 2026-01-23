@@ -43,6 +43,7 @@ a {
   position: sticky;
   top: 0;
   z-index: 10;
+  position: relative;
 }
 
 .header-row {
@@ -697,6 +698,7 @@ button:disabled {
   .header-row {
     flex-direction: row;
     align-items: center;
+    flex-wrap: wrap;
   }
 
   .menu-toggle {
@@ -711,6 +713,13 @@ button:disabled {
     padding: 10px;
     border-radius: 12px;
     width: 100%;
+    flex-basis: 100%;
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 100%;
+    margin-top: 8px;
+    z-index: 20;
   }
 
   .nav-links.open {
@@ -722,7 +731,7 @@ button:disabled {
   }
 
   .header-lower {
-    justify-content: center;
+    justify-content: flex-end;
     flex-direction: row;
     align-items: center;
   }
@@ -732,8 +741,9 @@ button:disabled {
   }
 
   .language-select {
-    width: 100%;
-    justify-content: center;
+    width: auto;
+    justify-content: flex-end;
+    margin-left: auto;
   }
 
   .language-select select {

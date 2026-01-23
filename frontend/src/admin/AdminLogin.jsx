@@ -22,7 +22,10 @@ const AdminLogin = ({ onSuccess }) => {
       }
       navigate('/admin');
     } catch (err) {
-      setError(err.message || 'లాగిన్ విఫలమైంది');
+      const msg = err.message && err.message.toLowerCase().includes('fetch')
+        ? 'API not reachable. Start backend or set VITE_API_URL.'
+        : err.message;
+      setError(msg || 'లాగిన్ విఫలమైంది');
     } finally {
       setLoading(false);
     }
@@ -39,7 +42,10 @@ const AdminLogin = ({ onSuccess }) => {
       }
       navigate('/admin');
     } catch (err) {
-      setError(err.message || 'Seed failed');
+      const msg = err.message && err.message.toLowerCase().includes('fetch')
+        ? 'API not reachable. Start backend or set VITE_API_URL.'
+        : err.message;
+      setError(msg || 'Seed failed');
     } finally {
       setSeeding(false);
     }
