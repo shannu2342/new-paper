@@ -8,7 +8,7 @@ import { todayInput } from '../utils/date.js';
 
 const HomePage = () => {
   const { language } = useLanguage();
-  const isTelugu = language === 'te';
+  const t = (en, te, hi = en) => (language === 'te' ? te : language === 'hi' ? hi : en);
   const { selectedDate } = useDate();
   const isPreviousEdition = selectedDate !== todayInput();
   const [articles, setArticles] = useState([]);
@@ -85,35 +85,35 @@ const HomePage = () => {
     <main className="page">
       {isPreviousEdition ? (
         <div className="edition-banner">
-          {isTelugu ? 'పాత సంచిక:' : 'Previous Edition:'} {selectedDate}
+          {t('Previous Edition:', 'పాత సంచిక:', 'पिछला संस्करण:')} {selectedDate}
         </div>
       ) : null}
       <BreakingTicker items={breaking} />
       <section className="page-header">
-        <h1>{isTelugu ? 'హోమ్ వార్తలు' : 'Home News'}</h1>
+        <h1>{t('Home News', 'హోమ్ వార్తలు', 'होम समाचार')}</h1>
       </section>
       <section className="home-featured">
         <div className="featured-card">
-          <h2>{isTelugu ? 'ప్రధాన వార్త' : 'Featured Story'}</h2>
+          <h2>{t('Featured Story', 'ప్రధాన వార్త', 'प्रमुख खबर')}</h2>
           {featured ? (
             <ArticleCard article={featured} />
           ) : (
-            <div className="empty">{isTelugu ? 'ప్రధాన వార్త లేదు.' : 'No featured story yet.'}</div>
+            <div className="empty">{t('No featured story yet.', 'ప్రధాన వార్త లేదు.', 'अभी कोई प्रमुख खबर नहीं है।')}</div>
           )}
         </div>
         <div className="latest-list">
-          <h2>{isTelugu ? 'తాజా వార్తలు' : 'Latest Updates'}</h2>
+          <h2>{t('Latest Updates', 'తాజా వార్తలు', 'ताज़ा अपडेट')}</h2>
           {latest.length === 0 ? (
-            <div className="empty">{isTelugu ? 'తాజా వార్తలు లేవు.' : 'No latest updates.'}</div>
+            <div className="empty">{t('No latest updates.', 'తాజా వార్తలు లేవు.', 'कोई ताज़ा अपडेट नहीं है।')}</div>
           ) : (
             latest.map((item) => <ArticleCard key={item._id} article={item} />)
           )}
         </div>
       </section>
       <section className="article-grid">
-        {loading ? <div className="empty">{isTelugu ? 'లోడ్ అవుతోంది...' : 'Loading...'}</div> : null}
+        {loading ? <div className="empty">{t('Loading...', 'లోడ్ అవుతోంది...', 'लोड हो रहा है...')}</div> : null}
         {!loading && articles.length === 0 ? (
-          <div className="empty">{isTelugu ? 'ఈ తేదీకి వార్తలు లేవు.' : 'No news for this date.'}</div>
+          <div className="empty">{t('No news for this date.', 'ఈ తేదీకి వార్తలు లేవు.', 'इस तारीख के लिए कोई समाचार नहीं है।')}</div>
         ) : null}
         {articles.map((article) => (
           <ArticleCard key={article._id} article={article} />

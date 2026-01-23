@@ -8,7 +8,7 @@ import { useDate } from '../contexts/DateContext.jsx';
 const OtherCategoryPage = () => {
   const { id } = useParams();
   const { language } = useLanguage();
-  const isTelugu = language === 'te';
+  const t = (en, te, hi = en) => (language === 'te' ? te : language === 'hi' ? hi : en);
   const { selectedDate } = useDate();
   const [articles, setArticles] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -35,12 +35,12 @@ const OtherCategoryPage = () => {
   return (
     <main className="page">
       <section className="page-header">
-        <h1>{isTelugu ? 'ఇతర వార్తలు' : 'Other News'}</h1>
+        <h1>{t('Other News', 'ఇతర వార్తలు', 'अन्य समाचार')}</h1>
       </section>
       <section className="article-grid">
-        {loading ? <div className="empty">{isTelugu ? 'లోడ్ అవుతోంది...' : 'Loading...'}</div> : null}
+        {loading ? <div className="empty">{t('Loading...', 'లోడ్ అవుతోంది...', 'लोड हो रहा है...')}</div> : null}
         {!loading && articles.length === 0 ? (
-          <div className="empty">{isTelugu ? 'ఈ తేదీకి వార్తలు లేవు.' : 'No news for this date.'}</div>
+          <div className="empty">{t('No news for this date.', 'ఈ తేదీకి వార్తలు లేవు.', 'इस तारीख के लिए कोई समाचार नहीं है।')}</div>
         ) : null}
         {articles.map((article) => (
           <ArticleCard key={article._id} article={article} />

@@ -4,10 +4,10 @@ import { useLanguage } from '../contexts/LanguageContext.jsx';
 const BreakingTicker = ({ items }) => {
   const { language } = useLanguage();
   if (!items.length) return null;
-  const isTelugu = language === 'te';
+  const t = (en, te, hi = en) => (language === 'te' ? te : language === 'hi' ? hi : en);
   return (
     <div className="breaking-ticker">
-      <span className="ticker-label">{isTelugu ? 'బ్రేకింగ్' : 'Breaking'}</span>
+      <span className="ticker-label">{t('Breaking', 'బ్రేకింగ్', 'ब्रेकिंग')}</span>
       <div className="ticker-track">
         <div className="ticker-content">
           {items.map((item) => (

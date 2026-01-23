@@ -7,7 +7,7 @@ import { useDate } from '../contexts/DateContext.jsx';
 
 const OtherPage = () => {
   const { language } = useLanguage();
-  const isTelugu = language === 'te';
+  const t = (en, te, hi = en) => (language === 'te' ? te : language === 'hi' ? hi : en);
   const { selectedDate, setDate } = useDate();
   const navigate = useNavigate();
   const [categories, setCategories] = useState([]);
@@ -27,12 +27,12 @@ const OtherPage = () => {
   return (
     <main className="page">
       <section className="page-header">
-        <h1>{isTelugu ? 'ఇతరాలు' : 'Other'}</h1>
+        <h1>{t('Other', 'ఇతరాలు', 'अन्य')}</h1>
       </section>
       <section className="archive-panel">
-        <h2>{isTelugu ? 'పాత సంచికలు' : 'Previous Editions'}</h2>
+        <h2>{t('Previous Editions', 'పాత సంచికలు', 'पिछले संस्करण')}</h2>
         <DateSelector
-          label={isTelugu ? 'తేదీ ఎంచుకోండి' : 'Select Date'}
+          label={t('Select Date', 'తేదీ ఎంచుకోండి', 'तारीख चुनें')}
           value={selectedDate}
           onChange={(value) => {
             setDate(value);
@@ -48,17 +48,17 @@ const OtherPage = () => {
             target="_blank"
             rel="noreferrer"
           >
-            {isTelugu ? 'ఇ-పేపర్ డౌన్‌లోడ్' : 'Download E-Paper'}
+            {t('Download E-Paper', 'ఇ-పేపర్ డౌన్‌లోడ్', 'ई-पेपर डाउनलोड करें')}
           </a>
         ) : (
           <Link className="epaper-link" to="/epaper">
-            {isTelugu ? 'ఇ-పేపర్ తెరవండి' : 'Open E-Paper'}
+            {t('Open E-Paper', 'ఇ-పేపర్ తెరవండి', 'ई-पेपर खोलें')}
           </Link>
         )}
       </section>
       <section className="other-categories">
         {categories.length === 0 ? (
-          <div className="empty">{isTelugu ? 'కేటగిరీలు లేవు.' : 'No categories yet.'}</div>
+          <div className="empty">{t('No categories yet.', 'కేటగిరీలు లేవు.', 'कोई श्रेणियां नहीं हैं।')}</div>
         ) : null}
         {categories.map((category) => (
           <Link key={category._id} to={`/other/${category._id}`} className="other-category">

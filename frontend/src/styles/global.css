@@ -19,7 +19,7 @@
 
 body {
   margin: 0;
-  font-family: 'Noto Serif Telugu', 'Noto Sans', serif;
+  font-family: 'Noto Serif Telugu', 'Noto Sans Devanagari', 'Noto Sans', serif;
   background: radial-gradient(circle at top, #f7f9f4 0%, #eef2ea 45%, #e8eee4 100%);
   color: var(--ink);
 }
@@ -133,6 +133,11 @@ a {
   gap: 10px;
   flex: 0 0 auto;
   font-weight: 600;
+}
+
+.mobile-social {
+  display: none;
+  gap: 12px;
 }
 
 .social-icon {
@@ -708,13 +713,14 @@ button:disabled {
   .nav-links {
     display: none;
     flex-direction: column;
-    gap: 8px;
-    background: rgba(255, 255, 255, 0.08);
-    padding: 10px;
-    border-radius: 0 0 16px 16px;
+    gap: 0;
+    background: #f4f6f2;
+    padding: 8px 0;
+    border-radius: 14px;
+    border: 1px solid rgba(12, 18, 15, 0.12);
+    box-shadow: 0 18px 32px rgba(12, 18, 15, 0.18);
     width: 72vw;
-    max-width: 320px;
-    flex-basis: 100%;
+    max-width: 280px;
     position: absolute;
     right: 16px;
     left: auto;
@@ -722,10 +728,35 @@ button:disabled {
     top: 100%;
     margin-top: 8px;
     z-index: 20;
+    overflow: hidden;
   }
 
   .nav-links.open {
     display: flex;
+  }
+
+  .nav-links .nav-link {
+    width: 100%;
+    text-align: left;
+    background: transparent;
+    color: #1c5f35;
+    padding: 12px 16px;
+    border-radius: 0;
+    font-size: 0.95rem;
+  }
+
+  .nav-links .nav-link:hover,
+  .nav-links .nav-link.active {
+    background: #e4efe6;
+    color: #1c5f35;
+    transform: none;
+  }
+
+  .mobile-social {
+    display: flex;
+    padding: 12px 16px 6px;
+    border-top: 1px solid rgba(12, 18, 15, 0.12);
+    justify-content: flex-start;
   }
 
   .social-links {
@@ -757,7 +788,7 @@ button:disabled {
   }
 
   .footer-social {
-    display: flex;
+    display: none;
   }
 
   .admin-header {

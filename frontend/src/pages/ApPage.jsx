@@ -7,7 +7,7 @@ import { partitions, districtsByPartition } from '../utils/apData.js';
 
 const ApPage = () => {
   const { language } = useLanguage();
-  const isTelugu = language === 'te';
+  const t = (en, te, hi = en) => (language === 'te' ? te : language === 'hi' ? hi : en);
   const { selectedDate } = useDate();
   const [selectedRegion, setSelectedRegion] = useState('');
   const [selectedDistrict, setSelectedDistrict] = useState('');
@@ -51,11 +51,11 @@ const ApPage = () => {
   return (
     <main className="page">
       <section className="page-header">
-        <h1>{isTelugu ? 'ఆంధ్రప్రదేశ్' : 'Andhra Pradesh'}</h1>
+        <h1>{t('Andhra Pradesh', 'ఆంధ్రప్రదేశ్', 'आंध्र प्रदेश')}</h1>
       </section>
       <section className="filters">
         <label>
-          {isTelugu ? 'ప్రాంతం' : 'Select Region'}
+          {t('Select Region', 'ప్రాంతం', 'क्षेत्र चुनें')}
           <select
             value={selectedRegion}
             onChange={(e) => {
@@ -63,7 +63,7 @@ const ApPage = () => {
               setSelectedDistrict('');
             }}
           >
-            <option value="">{isTelugu ? 'ఎంచుకోండి' : 'Select'}</option>
+            <option value="">{t('Select', 'ఎంచుకోండి', 'चुनें')}</option>
             {partitions.map((partition) => (
               <option key={partition.code} value={partition.code}>
                 {partition.name}
@@ -73,9 +73,9 @@ const ApPage = () => {
         </label>
         {selectedRegion ? (
           <label>
-            {isTelugu ? 'జిల్లా' : 'Select District'}
+            {t('Select District', 'జిల్లా', 'जिला चुनें')}
             <select value={selectedDistrict} onChange={(e) => setSelectedDistrict(e.target.value)}>
-              <option value="">{isTelugu ? 'ఎంచుకోండి' : 'Select'}</option>
+              <option value="">{t('Select', 'ఎంచుకోండి', 'चुनें')}</option>
               {districtOptions.map((district) => (
                 <option key={district.code} value={district.code}>
                   {district.name}
@@ -87,13 +87,15 @@ const ApPage = () => {
       </section>
       <section className="article-grid">
         {!selectedDistrict ? (
-          <div className="empty">{isTelugu ? 'ముందు జిల్లా ఎంచుకోండి.' : 'Please select a district to view news.'}</div>
+          <div className="empty">
+            {t('Please select a district to view news.', 'ముందు జిల్లా ఎంచుకోండి.', 'कृपया समाचार देखने के लिए जिला चुनें।')}
+          </div>
         ) : null}
         {selectedDistrict && loading ? (
-          <div className="empty">{isTelugu ? 'లోడ్ అవుతోంది...' : 'Loading...'}</div>
+          <div className="empty">{t('Loading...', 'లోడ్ అవుతోంది...', 'लोड हो रहा है...')}</div>
         ) : null}
         {selectedDistrict && !loading && articles.length === 0 ? (
-          <div className="empty">{isTelugu ? 'ఈ తేదీకి వార్తలు లేవు.' : 'No news for this date.'}</div>
+          <div className="empty">{t('No news for this date.', 'ఈ తేదీకి వార్తలు లేవు.', 'इस तारीख के लिए कोई समाचार नहीं है।')}</div>
         ) : null}
         {articles.map((article) => (
           <ArticleCard key={article._id} article={article} />

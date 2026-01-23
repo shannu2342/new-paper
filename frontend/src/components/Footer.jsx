@@ -12,7 +12,7 @@ const fallback = {
 
 const Footer = () => {
   const { language } = useLanguage();
-  const isTelugu = language === 'te';
+  const t = (en, te, hi = en) => (language === 'te' ? te : language === 'hi' ? hi : en);
   const [settings, setSettings] = useState(fallback);
 
   useEffect(() => {
@@ -25,17 +25,17 @@ const Footer = () => {
   return (
     <footer className="site-footer">
       <div className="footer-block">
-        <h3>{isTelugu ? 'చిరునామా' : 'Address'}</h3>
+        <h3>{t('Address', 'చిరునామా', 'पता')}</h3>
         <p>{settings.address?.[language] || settings.address?.en || settings.address?.te}</p>
       </div>
       <div className="footer-block">
-        <h3>{isTelugu ? 'సంప్రదింపు' : 'Contact'}</h3>
+        <h3>{t('Contact', 'సంప్రదింపు', 'संपर्क')}</h3>
         <p>{settings.contact?.[language] || settings.contact?.en || settings.contact?.te}</p>
         {settings.phone ? (
-          <p>{isTelugu ? 'ఫోన్' : 'Phone'}: {settings.phone}</p>
+          <p>{t('Phone', 'ఫోన్', 'फ़ोन')}: {settings.phone}</p>
         ) : null}
         {settings.email ? (
-          <p>{isTelugu ? 'ఇమెయిల్' : 'Email'}: {settings.email}</p>
+          <p>{t('Email', 'ఇమెయిల్', 'ईमेल')}: {settings.email}</p>
         ) : null}
       </div>
       <div className="footer-bottom">

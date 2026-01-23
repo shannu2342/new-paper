@@ -6,7 +6,7 @@ import { useLanguage } from '../contexts/LanguageContext.jsx';
 const ArticlePage = () => {
   const { id } = useParams();
   const { language } = useLanguage();
-  const isTelugu = language === 'te';
+  const t = (en, te, hi = en) => (language === 'te' ? te : language === 'hi' ? hi : en);
   const [article, setArticle] = useState(null);
 
   useEffect(() => {
@@ -16,7 +16,7 @@ const ArticlePage = () => {
   if (!article) {
     return (
       <main className="page">
-        <div className="empty">{isTelugu ? 'వార్త కనబడలేదు.' : 'Article not found.'}</div>
+        <div className="empty">{t('Article not found.', 'వార్త కనబడలేదు.', 'लेख नहीं मिला।')}</div>
       </main>
     );
   }

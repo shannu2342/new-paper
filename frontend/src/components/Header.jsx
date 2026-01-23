@@ -26,11 +26,22 @@ const routeMap = {
   other: '/other'
 };
 
+const hindiNavLabels = {
+  home: 'होम',
+  amaravati: 'अमरावती',
+  ap: 'आंध्र प्रदेश',
+  international: 'अंतरराष्ट्रीय',
+  national: 'राष्ट्रीय',
+  sports: 'खेल',
+  cinema: 'सिनेमा',
+  other: 'अन्य'
+};
+
 const Header = () => {
   const { language, setLanguage } = useLanguage();
   const [items, setItems] = useState(fallbackItems);
   const [menuOpen, setMenuOpen] = useState(false);
-  const isTelugu = language === 'te';
+  const t = (en, te, hi = en) => (language === 'te' ? te : language === 'hi' ? hi : en);
 
   useEffect(() => {
     let active = true;
@@ -61,7 +72,7 @@ const Header = () => {
           <Logo />
           <div className="brand-text">
             Greater Today
-            <span className="brand-sub">తెలుగు-ఫస్ట్ న్యూస్</span>
+            <span className="brand-sub">{t('Greater Today News', 'గ్రేటర్ టుడే న్యూస్', 'ग्रेटर टुडे समाचार')}</span>
           </div>
         </div>
         <button
@@ -75,7 +86,9 @@ const Header = () => {
         <nav className={`nav-links ${menuOpen ? 'open' : ''}`}>
           {items.map((item) => (
             <NavLink key={item.key} to={item.path} className="nav-link" onClick={() => setMenuOpen(false)}>
-              {item.title?.[language] || item.title?.en || item.title?.te}
+              {language === 'hi'
+                ? hindiNavLabels[item.key] || item.title?.en || item.title?.te
+                : item.title?.[language] || item.title?.en || item.title?.te}
             </NavLink>
           ))}
           <div className="mobile-social">
@@ -124,7 +137,7 @@ const Header = () => {
           >
             <option value="en">English</option>
             <option value="te">తెలుగు (Telugu)</option>
-            <option value="hi">Hindi</option>
+            <option value="hi">हिंदी (Hindi)</option>
           </select>
         </div>
       </div>

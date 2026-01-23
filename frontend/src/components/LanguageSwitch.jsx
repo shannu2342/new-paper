@@ -3,10 +3,11 @@ import { useLanguage } from '../contexts/LanguageContext.jsx';
 
 const LanguageSwitch = () => {
   const { language, setLanguage } = useLanguage();
+  const t = (en, te, hi = en) => (language === 'te' ? te : language === 'hi' ? hi : en);
 
   return (
     <div className="language-switch">
-      <h3>Switch Language (భాష మార్చండి)</h3>
+      <h3>{t('Switch Language', 'భాష మార్చండి', 'भाषा बदलें')}</h3>
       <div className="switch-buttons">
         <button type="button" className={language === 'en' ? 'active' : ''} onClick={() => setLanguage('en')}>
           English
@@ -15,7 +16,7 @@ const LanguageSwitch = () => {
           తెలుగు
         </button>
         <button type="button" className={language === 'hi' ? 'active' : ''} onClick={() => setLanguage('hi')}>
-          Hindi
+          हिंदी
         </button>
       </div>
     </div>
