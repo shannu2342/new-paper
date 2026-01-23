@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { api } from '../services/api.js';
 import { useLanguage } from '../contexts/LanguageContext.jsx';
@@ -10,12 +10,15 @@ const OtherPage = () => {
   const t = (en, te, hi = en) => (language === 'te' ? te : language === 'hi' ? hi : en);
   const { selectedDate, setDate } = useDate();
   const navigate = useNavigate();
-  const [categories, setCategories] = useState([]);
+  const [otherArticles, setOtherArticles] = useState([]);
   const [epaper, setEpaper] = useState(null);
 
   useEffect(() => {
-    api.get('/categories?type=other').then(setCategories).catch(() => setCategories([]));
-  }, []);
+    api
+      .get(`/articles?date=${selectedDate}&categoryType=other`)
+      .then(setOtherArticles)
+      .catch(() => setOtherArticles([]));
+  }, [selectedDate]);
 
   useEffect(() => {
     api
@@ -23,6 +26,21 @@ const OtherPage = () => {
       .then((data) => setEpaper(data[0] || null))
       .catch(() => setEpaper(null));
   }, [selectedDate]);
+
+  const categories = useMemo(() => {
+    const map = new Map();
+    otherArticles.forEach((article) => {
+      const key = article.otherCategoryKey || article.category?._id;
+      if (!key) return;
+      if (!map.has(key)) {
+        map.set(key, {
+          key,
+          title: article.otherCategory || article.category?.title || {}
+        });
+      }
+    });
+    return Array.from(map.values());
+  }, [otherArticles]);
 
   return (
     <main className="page">
@@ -58,10 +76,12 @@ const OtherPage = () => {
       </section>
       <section className="other-categories">
         {categories.length === 0 ? (
-          <div className="empty">{t('No categories yet.', 'కేటగిరీలు లేవు.', 'कोई श्रेणियां नहीं हैं।')}</div>
+          <div className="empty">
+            {t('No categories for this date.', 'ఈ తేదీకి కేటగిరీలు లేవు.', 'इस तारीख के लिए श्रेणियां नहीं हैं।')}
+          </div>
         ) : null}
         {categories.map((category) => (
-          <Link key={category._id} to={`/other/${category._id}`} className="other-category">
+          <Link key={category.key} to={`/other/${category.key}`} className="other-category">
             {category.title?.[language] || category.title?.en || category.title?.te}
           </Link>
         ))}

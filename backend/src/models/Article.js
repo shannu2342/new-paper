@@ -6,6 +6,8 @@ const articleSchema = new mongoose.Schema(
     title: { type: bilingualTextSchema, required: true },
     content: { type: bilingualTextSchema, required: true },
     summary: { type: bilingualTextSchema },
+    otherCategory: { type: bilingualTextSchema },
+    otherCategoryKey: { type: String, index: true },
     dateKey: { type: String, required: true, index: true },
     publishedAt: { type: Date, required: true },
     categoryType: {

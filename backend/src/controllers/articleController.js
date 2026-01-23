@@ -2,8 +2,15 @@ const Article = require('../models/Article');
 const { toDateKey } = require('../utils/dateKey');
 const { isValidPartition, isValidDistrict } = require('../utils/apData');
 
+const toKey = (value) =>
+  (value || '')
+    .toLowerCase()
+    .replace(/[^a-z0-9\s-]/g, '')
+    .trim()
+    .replace(/\s+/g, '-');
+
 const listArticles = async (req, res) => {
-  const { date, categoryType, apRegion, district, category, isBreaking, isFeatured, limit } = req.query;
+  const { date, categoryType, apRegion, district, category, otherCategoryKey, isBreaking, isFeatured, limit } = req.query;
   const { partition, districtCode } = req.query;
   const query = {};
   if (date) {
@@ -26,6 +33,9 @@ const listArticles = async (req, res) => {
   }
   if (category) {
     query.category = category;
+  }
+  if (otherCategoryKey) {
+    query.otherCategoryKey = otherCategoryKey;
   }
   if (isBreaking === 'true') {
     query.isBreaking = true;
@@ -66,6 +76,14 @@ const createArticle = async (req, res) => {
       return res.status(400).json({ message: 'Invalid AP partition or district.' });
     }
   }
+  if (payload.categoryType === 'other') {
+    if (!payload.otherCategory && !payload.category) {
+      return res.status(400).json({ message: 'Other articles require a category name.' });
+    }
+    if (!payload.otherCategoryKey && payload.otherCategory?.en) {
+      payload.otherCategoryKey = toKey(payload.otherCategory.en);
+    }
+  }
   const article = await Article.create(payload);
   return res.status(201).json(article);
 };
@@ -82,6 +100,14 @@ const updateArticle = async (req, res) => {
     }
     if (!isValidPartition(payload.partitionCode) || !isValidDistrict(payload.partitionCode, payload.districtCode)) {
       return res.status(400).json({ message: 'Invalid AP partition or district.' });
+    }
+  }
+  if (payload.categoryType === 'other') {
+    if (!payload.otherCategory && !payload.category) {
+      return res.status(400).json({ message: 'Other articles require a category name.' });
+    }
+    if (!payload.otherCategoryKey && payload.otherCategory?.en) {
+      payload.otherCategoryKey = toKey(payload.otherCategory.en);
     }
   }
   const article = await Article.findByIdAndUpdate(id, payload, { new: true });

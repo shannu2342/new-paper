@@ -17,9 +17,16 @@ const OtherCategoryPage = () => {
     let active = true;
     setLoading(true);
     api
-      .get(`/articles?date=${selectedDate}&categoryType=other&category=${id}`)
+      .get(`/articles?date=${selectedDate}&categoryType=other&otherCategoryKey=${id}`)
       .then((data) => {
-        if (active) setArticles(data);
+        if (!active) return;
+        if (data.length) {
+          setArticles(data);
+          return;
+        }
+        return api.get(`/articles?date=${selectedDate}&categoryType=other&category=${id}`).then((fallback) => {
+          if (active) setArticles(fallback);
+        });
       })
       .catch(() => {
         if (active) setArticles([]);

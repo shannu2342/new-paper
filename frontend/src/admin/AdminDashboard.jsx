@@ -1,7 +1,6 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { api } from '../services/api.js';
 import BilingualInput from './BilingualInput.jsx';
-import SortableList from './SortableList.jsx';
 import { todayInput } from '../utils/date.js';
 import { partitions, districtsByPartition } from '../utils/apData.js';
 
@@ -16,23 +15,27 @@ const categoryTypeOptions = [
   { value: 'other', label: 'Other (ఇతరాలు)' }
 ];
 
+const toKey = (value) =>
+  (value || '')
+    .toLowerCase()
+    .replace(/[^a-z0-9\s-]/g, '')
+    .trim()
+    .replace(/\s+/g, '-');
+
 const AdminDashboard = () => {
   const [activePanel, setActivePanel] = useState('news');
   const [previewLang, setPreviewLang] = useState('en');
   const [date, setDate] = useState(todayInput());
-  const [regions, setRegions] = useState([]);
-  const [districts, setDistricts] = useState([]);
   const [articles, setArticles] = useState([]);
   const [editingId, setEditingId] = useState(null);
   const [form, setForm] = useState({
     title: { te: '', en: '' },
     content: { te: '', en: '' },
     summary: { te: '', en: '' },
+    otherCategory: { te: '', en: '' },
+    otherCategoryKey: '',
     publishedAt: date,
     categoryType: 'home',
-    category: '',
-    apRegion: '',
-    district: '',
     partitionCode: '',
     districtCode: '',
     isBreaking: false,
@@ -41,8 +44,6 @@ const AdminDashboard = () => {
     images: []
   });
   const [message, setMessage] = useState('');
-  const [headerItems, setHeaderItems] = useState([]);
-  const [otherCategories, setOtherCategories] = useState([]);
   const [epaperDate, setEpaperDate] = useState(todayInput());
   const [epaperUrls, setEpaperUrls] = useState({ teluguPdfUrl: '', englishPdfUrl: '' });
   const [siteSettings, setSiteSettings] = useState({
@@ -51,14 +52,10 @@ const AdminDashboard = () => {
     phone: '',
     email: ''
   });
-  const [newRegion, setNewRegion] = useState({ title: { te: '', en: '' } });
-  const [newDistrict, setNewDistrict] = useState({ title: { te: '', en: '' }, apRegion: '' });
-  const [newOtherCategory, setNewOtherCategory] = useState({ title: { te: '', en: '' }, slug: '' });
 
   const authHeaders = useMemo(() => ({ auth: true }), []);
   const panels = [
     { key: 'news', label: 'News Entry (వార్తలు)' },
-    { key: 'structure', label: 'Structure (నిర్మాణం)' },
     { key: 'epaper', label: 'E-Paper (ఇ-పేపర్)' },
     { key: 'footer', label: 'Footer (ఫుటర్)' }
   ];
@@ -69,11 +66,10 @@ const AdminDashboard = () => {
       title: { te: '', en: '' },
       content: { te: '', en: '' },
       summary: { te: '', en: '' },
+      otherCategory: { te: '', en: '' },
+      otherCategoryKey: '',
       publishedAt: date,
       categoryType: 'home',
-      category: '',
-      apRegion: '',
-      district: '',
       partitionCode: '',
       districtCode: '',
       isBreaking: false,
@@ -84,9 +80,6 @@ const AdminDashboard = () => {
   };
 
   const loadMeta = () => {
-    api.get('/categories?type=other').then(setOtherCategories).catch(() => setOtherCategories([]));
-    api.get('/ap-regions').then(setRegions).catch(() => setRegions([]));
-    api.get('/districts').then(setDistricts).catch(() => setDistricts([]));
     api
       .get('/site-settings')
       .then((data) =>
@@ -105,18 +98,6 @@ const AdminDashboard = () => {
           email: ''
         })
       );
-    api
-      .get('/menu-settings')
-      .then((data) => {
-        const items = (data.headerItems || []).map((item) => ({
-          id: item.key,
-          label: `${item.title?.te || ''} (${item.title?.en || ''})`,
-          order: item.order,
-          raw: item
-        }));
-        setHeaderItems(items);
-      })
-      .catch(() => setHeaderItems([]));
   };
 
   useEffect(() => {
@@ -143,7 +124,17 @@ const AdminDashboard = () => {
       setMessage('Select AP partition and district. (AP ప్రాంతం, జిల్లా ఎంపిక చేయండి)');
       return;
     }
-    const payload = { ...form, publishedAt: date };
+    if (form.categoryType === 'other') {
+      if (!form.otherCategory?.te || !form.otherCategory?.en) {
+        setMessage('Enter Telugu and English category. (తెలుగు మరియు English కేటగిరీ ఇవ్వండి)');
+        return;
+      }
+    }
+    const payload = {
+      ...form,
+      otherCategoryKey: form.categoryType === 'other' ? form.otherCategoryKey || toKey(form.otherCategory.en) : '',
+      publishedAt: date
+    };
     try {
       if (editingId) {
         await api.put(`/articles/${editingId}`, payload, authHeaders);
@@ -166,11 +157,10 @@ const AdminDashboard = () => {
       title: article.title,
       content: article.content,
       summary: article.summary || { te: '', en: '' },
+      otherCategory: article.otherCategory || { te: '', en: '' },
+      otherCategoryKey: article.otherCategoryKey || '',
       publishedAt: article.publishedAt,
       categoryType: article.categoryType,
-      category: article.category?._id || '',
-      apRegion: article.apRegion?._id || '',
-      district: article.district?._id || '',
       partitionCode: article.partitionCode || '',
       districtCode: article.districtCode || '',
       isBreaking: article.isBreaking || false,
@@ -185,42 +175,6 @@ const AdminDashboard = () => {
     if (!file) return;
     const url = await handleUpload(file, 'image');
     setForm((prev) => ({ ...prev, images: [...prev.images, url] }));
-  };
-
-  const handleMenuSave = async () => {
-    const headerItemsPayload = headerItems.map((item, index) => ({
-      ...item.raw,
-      order: index
-    }));
-    await api.put('/menu-settings', { headerItems: headerItemsPayload }, authHeaders);
-    setMessage('Header order saved. (హెడర్ ఆర్డర్ సేవ్ అయింది.)');
-  };
-
-  const handleRegionOrderSave = async () => {
-    await api.put(
-      '/ap-regions/reorder',
-      { order: regions.map((region, index) => ({ id: region._id, order: index })) },
-      authHeaders
-    );
-    setMessage('AP region order saved. (AP ప్రాంతాల ఆర్డర్ సేవ్ అయింది.)');
-  };
-
-  const handleDistrictOrderSave = async () => {
-    await api.put(
-      '/districts/reorder',
-      { order: districts.map((district, index) => ({ id: district._id, order: index })) },
-      authHeaders
-    );
-    setMessage('District order saved. (జిల్లాల ఆర్డర్ సేవ్ అయింది.)');
-  };
-
-  const handleOtherCategoryOrderSave = async () => {
-    await api.put(
-      '/categories/reorder',
-      { order: otherCategories.map((cat, index) => ({ id: cat._id, order: index })) },
-      authHeaders
-    );
-    setMessage('Other category order saved. (ఇతర కేటగిరీలు ఆర్డర్ సేవ్ అయింది.)');
   };
 
   const handleEpaperUpload = async (lang, file) => {
@@ -245,54 +199,6 @@ const AdminDashboard = () => {
   const handleSiteSave = async () => {
     await api.put('/site-settings', siteSettings, authHeaders);
     setMessage('Footer details saved. (ఫుటర్ వివరాలు సేవ్ అయ్యాయి.)');
-  };
-
-  const handleAddRegion = async () => {
-    if (!newRegion.title.te || !newRegion.title.en) {
-      setMessage('Enter Telugu and English names. (తెలుగు మరియు English పేర్లు ఇవ్వండి.)');
-      return;
-    }
-    await api.post('/ap-regions', newRegion, authHeaders);
-    setNewRegion({ title: { te: '', en: '' } });
-    loadMeta();
-    setMessage('AP region added. (కొత్త AP ప్రాంతం సేవ్ అయింది.)');
-  };
-
-  const handleAddDistrict = async () => {
-    if (!newDistrict.apRegion) {
-      setMessage('Choose AP region. (AP ప్రాంతం ఎంచుకోండి.)');
-      return;
-    }
-    if (!newDistrict.title.te || !newDistrict.title.en) {
-      setMessage('Enter Telugu and English names. (తెలుగు మరియు English పేర్లు ఇవ్వండి.)');
-      return;
-    }
-    await api.post('/districts', newDistrict, authHeaders);
-    setNewDistrict({ title: { te: '', en: '' }, apRegion: '' });
-    loadMeta();
-    setMessage('District added. (కొత్త జిల్లా సేవ్ అయింది.)');
-  };
-
-  const handleAddOtherCategory = async () => {
-    if (!newOtherCategory.title.te || !newOtherCategory.title.en) {
-      setMessage('Enter Telugu and English names. (తెలుగు మరియు English పేర్లు ఇవ్వండి.)');
-      return;
-    }
-    const slugValue =
-      newOtherCategory.slug ||
-      (newOtherCategory.title.en || '')
-        .toLowerCase()
-        .replace(/[^a-z0-9\\s-]/g, '')
-        .trim()
-        .replace(/\\s+/g, '-');
-    await api.post(
-      '/categories',
-      { ...newOtherCategory, type: 'other', slug: slugValue },
-      authHeaders
-    );
-    setNewOtherCategory({ title: { te: '', en: '' }, slug: '' });
-    loadMeta();
-    setMessage('Other category added. (కొత్త ఇతర కేటగిరీ సేవ్ అయింది.)');
   };
 
   return (
@@ -355,7 +261,14 @@ const AdminDashboard = () => {
                   Category (విభాగం)
                   <select
                     value={form.categoryType}
-                    onChange={(e) => setForm((prev) => ({ ...prev, categoryType: e.target.value }))}
+                    onChange={(e) =>
+                      setForm((prev) => ({
+                        ...prev,
+                        categoryType: e.target.value,
+                        otherCategory: e.target.value === 'other' ? prev.otherCategory : { te: '', en: '' },
+                        otherCategoryKey: e.target.value === 'other' ? prev.otherCategoryKey : ''
+                      }))
+                    }
                   >
                     {categoryTypeOptions.map((option) => (
                       <option key={option.value} value={option.value}>
@@ -365,20 +278,17 @@ const AdminDashboard = () => {
                   </select>
                 </label>
                 {form.categoryType === 'other' ? (
-                  <label>
-                    Other Category (ఇతర కేటగిరీ)
-                    <select
-                      value={form.category}
-                      onChange={(e) => setForm((prev) => ({ ...prev, category: e.target.value }))}
-                    >
-                      <option value="">Select (ఎంపిక చేయండి)</option>
-                      {otherCategories.map((cat) => (
-                        <option key={cat._id} value={cat._id}>
-                          {cat.title?.te} ({cat.title?.en})
-                        </option>
-                      ))}
-                    </select>
-                  </label>
+                  <BilingualInput
+                    label="Other Category (ఇతర కేటగిరీ)"
+                    value={form.otherCategory}
+                    onChange={(next) =>
+                      setForm((prev) => ({
+                        ...prev,
+                        otherCategory: next,
+                        otherCategoryKey: toKey(next.en)
+                      }))
+                    }
+                  />
                 ) : null}
                 {form.categoryType === 'ap' ? (
                   <div className="ap-picker">
@@ -499,124 +409,9 @@ const AdminDashboard = () => {
             </section>
           ) : null}
 
-          {activePanel === 'structure' ? (
-            <section className="admin-section">
-              <h2>2. Manage Structure (నిర్మాణం నిర్వహణ)</h2>
-              <div className="admin-subsection">
-                <h3>Header Order (హెడర్ మెనూ ఆర్డర్)</h3>
-                <SortableList items={headerItems} onChange={setHeaderItems} />
-                <button type="button" onClick={handleMenuSave}>
-                  Save (సేవ్ చేయండి)
-                </button>
-              </div>
-              <div className="admin-subsection">
-                <h3>AP Region Order (AP ప్రాంతాల క్రమం)</h3>
-                <div className="simple-form">
-                  <BilingualInput
-                    label="New AP Region (కొత్త AP ప్రాంతం)"
-                    value={newRegion.title}
-                    onChange={(next) => setNewRegion((prev) => ({ ...prev, title: next }))}
-                  />
-                  <button type="button" onClick={handleAddRegion}>
-                    Add (జోడించండి)
-                  </button>
-                </div>
-                <SortableList
-                  items={regions.map((region) => ({
-                    id: region._id,
-                    label: `${region.title?.te} (${region.title?.en})`,
-                    order: region.order
-                  }))}
-                  onChange={(next) => {
-                    const ids = next.map((item) => item.id);
-                    setRegions((prev) => prev.slice().sort((a, b) => ids.indexOf(a._id) - ids.indexOf(b._id)));
-                  }}
-                />
-                <button type="button" onClick={handleRegionOrderSave}>
-                  Save (సేవ్ చేయండి)
-                </button>
-              </div>
-              <div className="admin-subsection">
-                <h3>District Order (జిల్లాల క్రమం)</h3>
-                <div className="simple-form">
-                  <label>
-                    AP Region (AP ప్రాంతం)
-                    <select
-                      value={newDistrict.apRegion}
-                      onChange={(e) => setNewDistrict((prev) => ({ ...prev, apRegion: e.target.value }))}
-                    >
-                      <option value="">Select (ఎంపిక చేయండి)</option>
-                      {regions.map((region) => (
-                        <option key={region._id} value={region._id}>
-                          {region.title?.te} ({region.title?.en})
-                        </option>
-                      ))}
-                    </select>
-                  </label>
-                  <BilingualInput
-                    label="New District (కొత్త జిల్లా)"
-                    value={newDistrict.title}
-                    onChange={(next) => setNewDistrict((prev) => ({ ...prev, title: next }))}
-                  />
-                  <button type="button" onClick={handleAddDistrict}>
-                    Add (జోడించండి)
-                  </button>
-                </div>
-                <SortableList
-                  items={districts.map((district) => ({
-                    id: district._id,
-                    label: `${district.title?.te} (${district.title?.en})`,
-                    order: district.order
-                  }))}
-                  onChange={(next) => {
-                    const ids = next.map((item) => item.id);
-                    setDistricts((prev) => prev.slice().sort((a, b) => ids.indexOf(a._id) - ids.indexOf(b._id)));
-                  }}
-                />
-                <button type="button" onClick={handleDistrictOrderSave}>
-                  Save (సేవ్ చేయండి)
-                </button>
-              </div>
-              <div className="admin-subsection">
-                <h3>Other Category Order (ఇతర కేటగిరీలు క్రమం)</h3>
-                <div className="simple-form">
-                  <BilingualInput
-                    label="New Other Category (కొత్త ఇతర కేటగిరీ)"
-                    value={newOtherCategory.title}
-                    onChange={(next) => setNewOtherCategory((prev) => ({ ...prev, title: next }))}
-                  />
-                  <label>
-                    Slug (URL పేరు)
-                    <input
-                      value={newOtherCategory.slug}
-                      onChange={(e) => setNewOtherCategory((prev) => ({ ...prev, slug: e.target.value }))}
-                    />
-                  </label>
-                  <button type="button" onClick={handleAddOtherCategory}>
-                    Add (జోడించండి)
-                  </button>
-                </div>
-                <SortableList
-                  items={otherCategories.map((cat) => ({
-                    id: cat._id,
-                    label: `${cat.title?.te} (${cat.title?.en})`,
-                    order: cat.order
-                  }))}
-                  onChange={(next) => {
-                    const ids = next.map((item) => item.id);
-                    setOtherCategories((prev) => prev.slice().sort((a, b) => ids.indexOf(a._id) - ids.indexOf(b._id)));
-                  }}
-                />
-                <button type="button" onClick={handleOtherCategoryOrderSave}>
-                  Save (సేవ్ చేయండి)
-                </button>
-              </div>
-            </section>
-          ) : null}
-
           {activePanel === 'epaper' ? (
             <section className="admin-section">
-              <h2>3. Manage E-Paper (ఇ-పేపర్ నిర్వహణ)</h2>
+              <h2>2. Manage E-Paper (ఇ-పేపర్ నిర్వహణ)</h2>
               <div className="admin-form">
                 <label>
                   Date (తేదీ)
@@ -647,7 +442,7 @@ const AdminDashboard = () => {
 
           {activePanel === 'footer' ? (
             <section className="admin-section">
-              <h2>4. Footer Details (ఫుటర్ వివరాలు)</h2>
+              <h2>3. Footer Details (ఫుటర్ వివరాలు)</h2>
               <div className="admin-form">
                 <BilingualInput
                   label="Address (చిరునామా)"
