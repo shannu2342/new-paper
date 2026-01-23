@@ -711,12 +711,14 @@ button:disabled {
     gap: 8px;
     background: rgba(255, 255, 255, 0.08);
     padding: 10px;
-    border-radius: 12px;
-    width: 100%;
+    border-radius: 0 0 16px 16px;
+    width: 72vw;
+    max-width: 320px;
     flex-basis: 100%;
     position: absolute;
-    left: 0;
-    right: 0;
+    right: 16px;
+    left: auto;
+    transform: none;
     top: 100%;
     margin-top: 8px;
     z-index: 20;
