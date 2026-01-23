@@ -511,6 +511,42 @@ button:disabled {
   gap: 12px;
 }
 
+.admin-layout {
+  display: grid;
+  grid-template-columns: 220px 1fr;
+  gap: 20px;
+  align-items: start;
+}
+
+.admin-sidebar {
+  background: #ffffff;
+  padding: 16px;
+  border-radius: 16px;
+  border: 1px solid var(--line);
+  box-shadow: var(--shadow);
+  display: grid;
+  gap: 10px;
+  position: sticky;
+  top: 96px;
+}
+
+.admin-sidebar button {
+  width: 100%;
+  text-align: left;
+  background: #eef2ea;
+  color: var(--ink);
+}
+
+.admin-sidebar button.active {
+  background: var(--accent);
+  color: #1a1a1a;
+}
+
+.admin-content {
+  display: grid;
+  gap: 18px;
+}
+
 .admin-section {
   background: #ffffff;
   padding: 20px;
@@ -577,6 +613,45 @@ button:disabled {
   border-radius: 16px;
   border: 1px dashed var(--line);
   margin-top: 12px;
+}
+
+.ap-picker {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  padding: 14px;
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  background: #f8faf6;
+}
+
+.ap-column h4 {
+  margin: 0 0 10px;
+}
+
+.ap-list {
+  display: grid;
+  gap: 8px;
+}
+
+.ap-districts {
+  min-height: 120px;
+}
+
+.ap-pill {
+  width: 100%;
+  text-align: left;
+  padding: 10px 12px;
+  border-radius: 12px;
+  border: 1px solid rgba(12, 18, 15, 0.12);
+  background: #ffffff;
+  font-weight: 600;
+  color: #1c5f35;
+}
+
+.ap-pill.active {
+  background: #e4efe6;
+  border-color: #9cc7ad;
 }
 
 .notice {
@@ -796,6 +871,23 @@ button:disabled {
     align-items: flex-start;
   }
 
+  .admin-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .admin-sidebar {
+    position: static;
+    display: flex;
+    overflow-x: auto;
+    gap: 8px;
+    padding: 12px;
+  }
+
+  .admin-sidebar button {
+    flex: 0 0 auto;
+    white-space: nowrap;
+  }
+
   .form-actions {
     flex-direction: column;
   }
@@ -811,6 +903,10 @@ button:disabled {
 
   .admin-list button {
     width: 100%;
+  }
+
+  .ap-picker {
+    grid-template-columns: 1fr;
   }
 }
 

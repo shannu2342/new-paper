@@ -17,6 +17,7 @@ const categoryTypeOptions = [
 ];
 
 const AdminDashboard = () => {
+  const [activePanel, setActivePanel] = useState('news');
   const [previewLang, setPreviewLang] = useState('en');
   const [date, setDate] = useState(todayInput());
   const [regions, setRegions] = useState([]);
@@ -55,6 +56,12 @@ const AdminDashboard = () => {
   const [newOtherCategory, setNewOtherCategory] = useState({ title: { te: '', en: '' }, slug: '' });
 
   const authHeaders = useMemo(() => ({ auth: true }), []);
+  const panels = [
+    { key: 'news', label: 'News Entry (వార్తలు)' },
+    { key: 'structure', label: 'Structure (నిర్మాణం)' },
+    { key: 'epaper', label: 'E-Paper (ఇ-పేపర్)' },
+    { key: 'footer', label: 'Footer (ఫుటర్)' }
+  ];
 
   const resetForm = () => {
     setEditingId(null);
@@ -303,335 +310,379 @@ const AdminDashboard = () => {
           Logout
         </button>
       </div>
-      {message ? <div className="notice">{message}</div> : null}
-
-      <section className="admin-section">
-        <h2>1. Add / Edit News (వార్తలు జోడించండి / మార్చండి)</h2>
-        <div className="preview-toggle">
-          <span>Preview (ప్రివ్యూ)</span>
-          <button type="button" onClick={() => setPreviewLang('en')} className={previewLang === 'en' ? 'active' : ''}>
-            English
-          </button>
-          <button type="button" onClick={() => setPreviewLang('te')} className={previewLang === 'te' ? 'active' : ''}>
-            తెలుగు
-          </button>
-        </div>
-        <div className="admin-form">
-          <label>
-            Date (తేదీ)
-            <input type="date" value={date} onChange={(e) => setDate(e.target.value)} />
-          </label>
-          <label>
-            Category (విభాగం)
-            <select
-              value={form.categoryType}
-              onChange={(e) => setForm((prev) => ({ ...prev, categoryType: e.target.value }))}
+      <div className="admin-layout">
+        <aside className="admin-sidebar">
+          {panels.map((panel) => (
+            <button
+              key={panel.key}
+              type="button"
+              className={activePanel === panel.key ? 'active' : ''}
+              onClick={() => setActivePanel(panel.key)}
             >
-              {categoryTypeOptions.map((option) => (
-                <option key={option.value} value={option.value}>
-                  {option.label}
-                </option>
-              ))}
-            </select>
-          </label>
-          {form.categoryType === 'other' ? (
-            <label>
-              Other Category (ఇతర కేటగిరీ)
-              <select
-                value={form.category}
-                onChange={(e) => setForm((prev) => ({ ...prev, category: e.target.value }))}
-              >
-                <option value="">Select (ఎంపిక చేయండి)</option>
-                {otherCategories.map((cat) => (
-                  <option key={cat._id} value={cat._id}>
-                    {cat.title?.te} ({cat.title?.en})
-                  </option>
-                ))}
-              </select>
-            </label>
-          ) : null}
-          {form.categoryType === 'ap' ? (
-            <>
-              <label>
-                Select Partition (AP ప్రాంతం)
-                <select
-                  value={form.partitionCode}
-                  onChange={(e) =>
-                    setForm((prev) => ({
-                      ...prev,
-                      partitionCode: e.target.value,
-                      districtCode: ''
-                    }))
-                  }
-                >
-                  <option value="">Select (ఎంపిక చేయండి)</option>
-                  {partitions.map((partition) => (
-                    <option key={partition.code} value={partition.code}>
-                      {partition.name}
-                    </option>
-                  ))}
-                </select>
-              </label>
-              <label>
-                Select District (జిల్లా)
-                <select
-                  value={form.districtCode}
-                  onChange={(e) => setForm((prev) => ({ ...prev, districtCode: e.target.value }))}
-                  disabled={!form.partitionCode}
-                >
-                  <option value="">Select (ఎంపిక చేయండి)</option>
-                  {(districtsByPartition[form.partitionCode] || []).map((district) => (
-                    <option key={district.code} value={district.code}>
-                      {district.name}
-                    </option>
-                  ))}
-                </select>
-              </label>
-            </>
-          ) : null}
-          <BilingualInput
-            label="Title (శీర్షిక)"
-            value={form.title}
-            onChange={(next) => setForm((prev) => ({ ...prev, title: next }))}
-          />
-          <BilingualInput
-            label="Summary (సంక్షిప్తం)"
-            value={form.summary}
-            onChange={(next) => setForm((prev) => ({ ...prev, summary: next }))}
-            multiline
-          />
-          <BilingualInput
-            label="Content (వార్త)"
-            value={form.content}
-            onChange={(next) => setForm((prev) => ({ ...prev, content: next }))}
-            multiline
-          />
-          <div className="inline-fields">
-            <label className="checkbox-field">
-              <input
-                type="checkbox"
-                checked={form.isBreaking}
-                onChange={(e) => setForm((prev) => ({ ...prev, isBreaking: e.target.checked }))}
-              />
-              Breaking News (బ్రేకింగ్)
-            </label>
-            <label className="checkbox-field">
-              <input
-                type="checkbox"
-                checked={form.isFeatured}
-                onChange={(e) => setForm((prev) => ({ ...prev, isFeatured: e.target.checked }))}
-              />
-              Featured Story (ప్రధాన వార్త)
-            </label>
-            <label>
-              Priority (ప్రాధాన్యం)
-              <input
-                type="number"
-                value={form.priority}
-                onChange={(e) => setForm((prev) => ({ ...prev, priority: Number(e.target.value) }))}
-              />
-            </label>
-          </div>
-          <label>
-            Images (చిత్రాలు)
-            <input type="file" accept="image/*" onChange={handleImageUpload} />
-          </label>
-          {form.images.length ? (
-            <div className="preview-box">{form.images.map((img) => <div key={img}>{img}</div>)}</div>
-          ) : null}
-          <div className="form-actions">
-            <button type="button" onClick={handleArticleSave}>
-              {editingId ? 'Update (మార్చు)' : 'Save (సేవ్)'}
-            </button>
-            <button type="button" className="secondary" onClick={resetForm}>
-              New (కొత్తది)
-            </button>
-          </div>
-        </div>
-        <div className="preview-box">
-          <strong>Preview ({previewLang === 'en' ? 'English' : 'తెలుగు'})</strong>
-          <h3>{form.title?.[previewLang]}</h3>
-          <p>{form.summary?.[previewLang]}</p>
-          <div>{form.content?.[previewLang]}</div>
-        </div>
-        <div className="admin-list">
-          <h3>News for this date (ఈ తేదీ వార్తలు)</h3>
-          {articles.map((article) => (
-            <button key={article._id} type="button" onClick={() => handleEditArticle(article)}>
-              {article.title?.te} ({article.title?.en})
+              {panel.label}
             </button>
           ))}
-        </div>
-      </section>
+        </aside>
+        <div className="admin-content">
+          {message ? <div className="notice">{message}</div> : null}
 
-      <section className="admin-section">
-        <h2>2. Manage Structure (నిర్మాణం నిర్వహణ)</h2>
-        <div className="admin-subsection">
-          <h3>Header Order (హెడర్ మెనూ ఆర్డర్)</h3>
-          <SortableList items={headerItems} onChange={setHeaderItems} />
-          <button type="button" onClick={handleMenuSave}>
-            Save (సేవ్ చేయండి)
-          </button>
-        </div>
-        <div className="admin-subsection">
-          <h3>AP Region Order (AP ప్రాంతాల క్రమం)</h3>
-          <div className="simple-form">
-            <BilingualInput
-              label="New AP Region (కొత్త AP ప్రాంతం)"
-              value={newRegion.title}
-              onChange={(next) => setNewRegion((prev) => ({ ...prev, title: next }))}
-            />
-            <button type="button" onClick={handleAddRegion}>
-              Add (జోడించండి)
-            </button>
-          </div>
-          <SortableList
-            items={regions.map((region) => ({
-              id: region._id,
-              label: `${region.title?.te} (${region.title?.en})`,
-              order: region.order
-            }))}
-            onChange={(next) => {
-              const ids = next.map((item) => item.id);
-              setRegions((prev) => prev.slice().sort((a, b) => ids.indexOf(a._id) - ids.indexOf(b._id)));
-            }}
-          />
-          <button type="button" onClick={handleRegionOrderSave}>
-            Save (సేవ్ చేయండి)
-          </button>
-        </div>
-        <div className="admin-subsection">
-          <h3>District Order (జిల్లాల క్రమం)</h3>
-          <div className="simple-form">
-            <label>
-              AP Region (AP ప్రాంతం)
-              <select
-                value={newDistrict.apRegion}
-                onChange={(e) => setNewDistrict((prev) => ({ ...prev, apRegion: e.target.value }))}
-              >
-                <option value="">Select (ఎంపిక చేయండి)</option>
-                {regions.map((region) => (
-                  <option key={region._id} value={region._id}>
-                    {region.title?.te} ({region.title?.en})
-                  </option>
+          {activePanel === 'news' ? (
+            <section className="admin-section">
+              <h2>1. Add / Edit News (వార్తలు జోడించండి / మార్చండి)</h2>
+              <div className="preview-toggle">
+                <span>Preview (ప్రివ్యూ)</span>
+                <button
+                  type="button"
+                  onClick={() => setPreviewLang('en')}
+                  className={previewLang === 'en' ? 'active' : ''}
+                >
+                  English
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setPreviewLang('te')}
+                  className={previewLang === 'te' ? 'active' : ''}
+                >
+                  తెలుగు
+                </button>
+              </div>
+              <div className="admin-form">
+                <label>
+                  Date (తేదీ)
+                  <input type="date" value={date} onChange={(e) => setDate(e.target.value)} />
+                </label>
+                <label>
+                  Category (విభాగం)
+                  <select
+                    value={form.categoryType}
+                    onChange={(e) => setForm((prev) => ({ ...prev, categoryType: e.target.value }))}
+                  >
+                    {categoryTypeOptions.map((option) => (
+                      <option key={option.value} value={option.value}>
+                        {option.label}
+                      </option>
+                    ))}
+                  </select>
+                </label>
+                {form.categoryType === 'other' ? (
+                  <label>
+                    Other Category (ఇతర కేటగిరీ)
+                    <select
+                      value={form.category}
+                      onChange={(e) => setForm((prev) => ({ ...prev, category: e.target.value }))}
+                    >
+                      <option value="">Select (ఎంపిక చేయండి)</option>
+                      {otherCategories.map((cat) => (
+                        <option key={cat._id} value={cat._id}>
+                          {cat.title?.te} ({cat.title?.en})
+                        </option>
+                      ))}
+                    </select>
+                  </label>
+                ) : null}
+                {form.categoryType === 'ap' ? (
+                  <div className="ap-picker">
+                    <div className="ap-column">
+                      <h4>Partitions (ప్రాంతాలు)</h4>
+                      <div className="ap-list">
+                        {partitions.map((partition) => (
+                          <button
+                            key={partition.code}
+                            type="button"
+                            className={`ap-pill ${form.partitionCode === partition.code ? 'active' : ''}`}
+                            onClick={() =>
+                              setForm((prev) => ({
+                                ...prev,
+                                partitionCode: partition.code,
+                                districtCode: ''
+                              }))
+                            }
+                          >
+                            {partition.name}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                    <div className="ap-column">
+                      <h4>Districts (జిల్లాలు)</h4>
+                      <div className="ap-list ap-districts">
+                        {!form.partitionCode ? (
+                          <div className="empty">Select a partition first. (ముందుగా ప్రాంతం ఎంచుకోండి)</div>
+                        ) : null}
+                        {(districtsByPartition[form.partitionCode] || []).map((district) => (
+                          <button
+                            key={district.code}
+                            type="button"
+                            className={`ap-pill ${form.districtCode === district.code ? 'active' : ''}`}
+                            onClick={() => setForm((prev) => ({ ...prev, districtCode: district.code }))}
+                          >
+                            {district.name}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                ) : null}
+                <BilingualInput
+                  label="Title (శీర్షిక)"
+                  value={form.title}
+                  onChange={(next) => setForm((prev) => ({ ...prev, title: next }))}
+                />
+                <BilingualInput
+                  label="Summary (సంక్షిప్తం)"
+                  value={form.summary}
+                  onChange={(next) => setForm((prev) => ({ ...prev, summary: next }))}
+                  multiline
+                />
+                <BilingualInput
+                  label="Content (వార్త)"
+                  value={form.content}
+                  onChange={(next) => setForm((prev) => ({ ...prev, content: next }))}
+                  multiline
+                />
+                <div className="inline-fields">
+                  <label className="checkbox-field">
+                    <input
+                      type="checkbox"
+                      checked={form.isBreaking}
+                      onChange={(e) => setForm((prev) => ({ ...prev, isBreaking: e.target.checked }))}
+                    />
+                    Breaking News (బ్రేకింగ్)
+                  </label>
+                  <label className="checkbox-field">
+                    <input
+                      type="checkbox"
+                      checked={form.isFeatured}
+                      onChange={(e) => setForm((prev) => ({ ...prev, isFeatured: e.target.checked }))}
+                    />
+                    Featured Story (ప్రధాన వార్త)
+                  </label>
+                  <label>
+                    Priority (ప్రాధాన్యం)
+                    <input
+                      type="number"
+                      value={form.priority}
+                      onChange={(e) => setForm((prev) => ({ ...prev, priority: Number(e.target.value) }))}
+                    />
+                  </label>
+                </div>
+                <label>
+                  Images (చిత్రాలు)
+                  <input type="file" accept="image/*" onChange={handleImageUpload} />
+                </label>
+                {form.images.length ? (
+                  <div className="preview-box">{form.images.map((img) => <div key={img}>{img}</div>)}</div>
+                ) : null}
+                <div className="form-actions">
+                  <button type="button" onClick={handleArticleSave}>
+                    {editingId ? 'Update (మార్చు)' : 'Save (సేవ్)'}
+                  </button>
+                  <button type="button" className="secondary" onClick={resetForm}>
+                    New (కొత్తది)
+                  </button>
+                </div>
+              </div>
+              <div className="preview-box">
+                <strong>Preview ({previewLang === 'en' ? 'English' : 'తెలుగు'})</strong>
+                <h3>{form.title?.[previewLang]}</h3>
+                <p>{form.summary?.[previewLang]}</p>
+                <div>{form.content?.[previewLang]}</div>
+              </div>
+              <div className="admin-list">
+                <h3>News for this date (ఈ తేదీ వార్తలు)</h3>
+                {articles.map((article) => (
+                  <button key={article._id} type="button" onClick={() => handleEditArticle(article)}>
+                    {article.title?.te} ({article.title?.en})
+                  </button>
                 ))}
-              </select>
-            </label>
-            <BilingualInput
-              label="New District (కొత్త జిల్లా)"
-              value={newDistrict.title}
-              onChange={(next) => setNewDistrict((prev) => ({ ...prev, title: next }))}
-            />
-            <button type="button" onClick={handleAddDistrict}>
-              Add (జోడించండి)
-            </button>
-          </div>
-          <SortableList
-            items={districts.map((district) => ({
-              id: district._id,
-              label: `${district.title?.te} (${district.title?.en})`,
-              order: district.order
-            }))}
-            onChange={(next) => {
-              const ids = next.map((item) => item.id);
-              setDistricts((prev) => prev.slice().sort((a, b) => ids.indexOf(a._id) - ids.indexOf(b._id)));
-            }}
-          />
-          <button type="button" onClick={handleDistrictOrderSave}>
-            Save (సేవ్ చేయండి)
-          </button>
-        </div>
-        <div className="admin-subsection">
-          <h3>Other Category Order (ఇతర కేటగిరీలు క్రమం)</h3>
-          <div className="simple-form">
-            <BilingualInput
-              label="New Other Category (కొత్త ఇతర కేటగిరీ)"
-              value={newOtherCategory.title}
-              onChange={(next) => setNewOtherCategory((prev) => ({ ...prev, title: next }))}
-            />
-            <label>
-              Slug (URL పేరు)
-              <input
-                value={newOtherCategory.slug}
-                onChange={(e) => setNewOtherCategory((prev) => ({ ...prev, slug: e.target.value }))}
-              />
-            </label>
-            <button type="button" onClick={handleAddOtherCategory}>
-              Add (జోడించండి)
-            </button>
-          </div>
-          <SortableList
-            items={otherCategories.map((cat) => ({
-              id: cat._id,
-              label: `${cat.title?.te} (${cat.title?.en})`,
-              order: cat.order
-            }))}
-            onChange={(next) => {
-              const ids = next.map((item) => item.id);
-              setOtherCategories((prev) => prev.slice().sort((a, b) => ids.indexOf(a._id) - ids.indexOf(b._id)));
-            }}
-          />
-          <button type="button" onClick={handleOtherCategoryOrderSave}>
-            Save (సేవ్ చేయండి)
-          </button>
-        </div>
-      </section>
+              </div>
+            </section>
+          ) : null}
 
-      <section className="admin-section">
-        <h2>3. Manage E-Paper (ఇ-పేపర్ నిర్వహణ)</h2>
-        <div className="admin-form">
-          <label>
-            Date (తేదీ)
-            <input type="date" value={epaperDate} onChange={(e) => setEpaperDate(e.target.value)} />
-          </label>
-          <label>
-            Telugu PDF (తెలుగు PDF)
-            <input type="file" accept="application/pdf" onChange={(e) => handleEpaperUpload('teluguPdfUrl', e.target.files?.[0])} />
-          </label>
-          <label>
-            English PDF (Optional) (ఆంగ్ల PDF ఐచ్ఛికం)
-            <input type="file" accept="application/pdf" onChange={(e) => handleEpaperUpload('englishPdfUrl', e.target.files?.[0])} />
-          </label>
-          <button type="button" onClick={handleEpaperSave}>
-            Save (సేవ్ చేయండి)
-          </button>
-        </div>
-      </section>
+          {activePanel === 'structure' ? (
+            <section className="admin-section">
+              <h2>2. Manage Structure (నిర్మాణం నిర్వహణ)</h2>
+              <div className="admin-subsection">
+                <h3>Header Order (హెడర్ మెనూ ఆర్డర్)</h3>
+                <SortableList items={headerItems} onChange={setHeaderItems} />
+                <button type="button" onClick={handleMenuSave}>
+                  Save (సేవ్ చేయండి)
+                </button>
+              </div>
+              <div className="admin-subsection">
+                <h3>AP Region Order (AP ప్రాంతాల క్రమం)</h3>
+                <div className="simple-form">
+                  <BilingualInput
+                    label="New AP Region (కొత్త AP ప్రాంతం)"
+                    value={newRegion.title}
+                    onChange={(next) => setNewRegion((prev) => ({ ...prev, title: next }))}
+                  />
+                  <button type="button" onClick={handleAddRegion}>
+                    Add (జోడించండి)
+                  </button>
+                </div>
+                <SortableList
+                  items={regions.map((region) => ({
+                    id: region._id,
+                    label: `${region.title?.te} (${region.title?.en})`,
+                    order: region.order
+                  }))}
+                  onChange={(next) => {
+                    const ids = next.map((item) => item.id);
+                    setRegions((prev) => prev.slice().sort((a, b) => ids.indexOf(a._id) - ids.indexOf(b._id)));
+                  }}
+                />
+                <button type="button" onClick={handleRegionOrderSave}>
+                  Save (సేవ్ చేయండి)
+                </button>
+              </div>
+              <div className="admin-subsection">
+                <h3>District Order (జిల్లాల క్రమం)</h3>
+                <div className="simple-form">
+                  <label>
+                    AP Region (AP ప్రాంతం)
+                    <select
+                      value={newDistrict.apRegion}
+                      onChange={(e) => setNewDistrict((prev) => ({ ...prev, apRegion: e.target.value }))}
+                    >
+                      <option value="">Select (ఎంపిక చేయండి)</option>
+                      {regions.map((region) => (
+                        <option key={region._id} value={region._id}>
+                          {region.title?.te} ({region.title?.en})
+                        </option>
+                      ))}
+                    </select>
+                  </label>
+                  <BilingualInput
+                    label="New District (కొత్త జిల్లా)"
+                    value={newDistrict.title}
+                    onChange={(next) => setNewDistrict((prev) => ({ ...prev, title: next }))}
+                  />
+                  <button type="button" onClick={handleAddDistrict}>
+                    Add (జోడించండి)
+                  </button>
+                </div>
+                <SortableList
+                  items={districts.map((district) => ({
+                    id: district._id,
+                    label: `${district.title?.te} (${district.title?.en})`,
+                    order: district.order
+                  }))}
+                  onChange={(next) => {
+                    const ids = next.map((item) => item.id);
+                    setDistricts((prev) => prev.slice().sort((a, b) => ids.indexOf(a._id) - ids.indexOf(b._id)));
+                  }}
+                />
+                <button type="button" onClick={handleDistrictOrderSave}>
+                  Save (సేవ్ చేయండి)
+                </button>
+              </div>
+              <div className="admin-subsection">
+                <h3>Other Category Order (ఇతర కేటగిరీలు క్రమం)</h3>
+                <div className="simple-form">
+                  <BilingualInput
+                    label="New Other Category (కొత్త ఇతర కేటగిరీ)"
+                    value={newOtherCategory.title}
+                    onChange={(next) => setNewOtherCategory((prev) => ({ ...prev, title: next }))}
+                  />
+                  <label>
+                    Slug (URL పేరు)
+                    <input
+                      value={newOtherCategory.slug}
+                      onChange={(e) => setNewOtherCategory((prev) => ({ ...prev, slug: e.target.value }))}
+                    />
+                  </label>
+                  <button type="button" onClick={handleAddOtherCategory}>
+                    Add (జోడించండి)
+                  </button>
+                </div>
+                <SortableList
+                  items={otherCategories.map((cat) => ({
+                    id: cat._id,
+                    label: `${cat.title?.te} (${cat.title?.en})`,
+                    order: cat.order
+                  }))}
+                  onChange={(next) => {
+                    const ids = next.map((item) => item.id);
+                    setOtherCategories((prev) => prev.slice().sort((a, b) => ids.indexOf(a._id) - ids.indexOf(b._id)));
+                  }}
+                />
+                <button type="button" onClick={handleOtherCategoryOrderSave}>
+                  Save (సేవ్ చేయండి)
+                </button>
+              </div>
+            </section>
+          ) : null}
 
-      <section className="admin-section">
-        <h2>4. Footer Details (ఫుటర్ వివరాలు)</h2>
-        <div className="admin-form">
-          <BilingualInput
-            label="Address (చిరునామా)"
-            value={siteSettings.address}
-            onChange={(next) => setSiteSettings((prev) => ({ ...prev, address: next }))}
-            multiline
-          />
-          <BilingualInput
-            label="Contact Info (సంప్రదింపు వివరాలు)"
-            value={siteSettings.contact}
-            onChange={(next) => setSiteSettings((prev) => ({ ...prev, contact: next }))}
-            multiline
-          />
-          <label>
-            Phone (ఫోన్)
-            <input
-              value={siteSettings.phone}
-              onChange={(e) => setSiteSettings((prev) => ({ ...prev, phone: e.target.value }))}
-            />
-          </label>
-          <label>
-            Email (ఇమెయిల్)
-            <input
-              value={siteSettings.email}
-              onChange={(e) => setSiteSettings((prev) => ({ ...prev, email: e.target.value }))}
-            />
-          </label>
-          <button type="button" onClick={handleSiteSave}>
-            Save (సేవ్ చేయండి)
-          </button>
+          {activePanel === 'epaper' ? (
+            <section className="admin-section">
+              <h2>3. Manage E-Paper (ఇ-పేపర్ నిర్వహణ)</h2>
+              <div className="admin-form">
+                <label>
+                  Date (తేదీ)
+                  <input type="date" value={epaperDate} onChange={(e) => setEpaperDate(e.target.value)} />
+                </label>
+                <label>
+                  Telugu PDF (తెలుగు PDF)
+                  <input
+                    type="file"
+                    accept="application/pdf"
+                    onChange={(e) => handleEpaperUpload('teluguPdfUrl', e.target.files?.[0])}
+                  />
+                </label>
+                <label>
+                  English PDF (Optional) (ఆంగ్ల PDF ఐచ్ఛికం)
+                  <input
+                    type="file"
+                    accept="application/pdf"
+                    onChange={(e) => handleEpaperUpload('englishPdfUrl', e.target.files?.[0])}
+                  />
+                </label>
+                <button type="button" onClick={handleEpaperSave}>
+                  Save (సేవ్ చేయండి)
+                </button>
+              </div>
+            </section>
+          ) : null}
+
+          {activePanel === 'footer' ? (
+            <section className="admin-section">
+              <h2>4. Footer Details (ఫుటర్ వివరాలు)</h2>
+              <div className="admin-form">
+                <BilingualInput
+                  label="Address (చిరునామా)"
+                  value={siteSettings.address}
+                  onChange={(next) => setSiteSettings((prev) => ({ ...prev, address: next }))}
+                  multiline
+                />
+                <BilingualInput
+                  label="Contact Info (సంప్రదింపు వివరాలు)"
+                  value={siteSettings.contact}
+                  onChange={(next) => setSiteSettings((prev) => ({ ...prev, contact: next }))}
+                  multiline
+                />
+                <label>
+                  Phone (ఫోన్)
+                  <input
+                    value={siteSettings.phone}
+                    onChange={(e) => setSiteSettings((prev) => ({ ...prev, phone: e.target.value }))}
+                  />
+                </label>
+                <label>
+                  Email (ఇమెయిల్)
+                  <input
+                    value={siteSettings.email}
+                    onChange={(e) => setSiteSettings((prev) => ({ ...prev, email: e.target.value }))}
+                  />
+                </label>
+                <button type="button" onClick={handleSiteSave}>
+                  Save (సేవ్ చేయండి)
+                </button>
+              </div>
+            </section>
+          ) : null}
         </div>
-      </section>
+      </div>
     </main>
   );
 };
