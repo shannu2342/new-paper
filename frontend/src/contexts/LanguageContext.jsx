@@ -3,7 +3,7 @@ import React, { createContext, useContext, useMemo, useState } from 'react';
 const LanguageContext = createContext(null);
 
 const STORAGE_KEY = 'news-language';
-const SUPPORTED = ['en', 'te', 'ta', 'kn', 'ml', 'hi', 'bn', 'mr', 'pa', 'or'];
+const SUPPORTED = ['en', 'te', 'hi'];
 
 export const LanguageProvider = ({ children }) => {
   const [language, setLanguage] = useState(() => {

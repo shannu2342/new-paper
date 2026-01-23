@@ -29,6 +29,7 @@ const routeMap = {
 const Header = () => {
   const { language, setLanguage } = useLanguage();
   const [items, setItems] = useState(fallbackItems);
+  const [menuOpen, setMenuOpen] = useState(false);
   const isTelugu = language === 'te';
 
   useEffect(() => {
@@ -63,9 +64,17 @@ const Header = () => {
             <span className="brand-sub">తెలుగు-ఫస్ట్ న్యూస్</span>
           </div>
         </div>
-        <nav className="nav-links">
+        <button
+          type="button"
+          className="menu-toggle"
+          onClick={() => setMenuOpen((prev) => !prev)}
+          aria-label="Open menu"
+        >
+          {menuOpen ? 'Close' : 'Menu'}
+        </button>
+        <nav className={`nav-links ${menuOpen ? 'open' : ''}`}>
           {items.map((item) => (
-            <NavLink key={item.key} to={item.path} className="nav-link">
+            <NavLink key={item.key} to={item.path} className="nav-link" onClick={() => setMenuOpen(false)}>
               {item.title?.[language] || item.title?.en || item.title?.te}
             </NavLink>
           ))}
@@ -100,14 +109,7 @@ const Header = () => {
           >
             <option value="en">English</option>
             <option value="te">తెలుగు (Telugu)</option>
-            <option value="ta">Tamil</option>
-            <option value="kn">Kannada</option>
-            <option value="ml">Malayalam</option>
             <option value="hi">Hindi</option>
-            <option value="bn">Bengali</option>
-            <option value="mr">Marathi</option>
-            <option value="or">Odia</option>
-            <option value="pa">Punjabi</option>
           </select>
         </div>
       </div>
