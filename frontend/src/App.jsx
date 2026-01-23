@@ -9,8 +9,7 @@ import OtherPage from './pages/OtherPage.jsx';
 import OtherCategoryPage from './pages/OtherCategoryPage.jsx';
 import ArticlePage from './pages/ArticlePage.jsx';
 import EpaperPage from './pages/EpaperPage.jsx';
-import AdminLogin from './admin/AdminLogin.jsx';
-import AdminDashboard from './admin/AdminDashboard.jsx';
+import AdminPage from './admin/AdminPage.jsx';
 import Footer from './components/Footer.jsx';
 
 const App = () => {
@@ -33,8 +32,7 @@ const App = () => {
         <Route path="/other/:id" element={<OtherCategoryPage />} />
         <Route path="/articles/:id" element={<ArticlePage />} />
         <Route path="/epaper" element={<EpaperPage />} />
-        <Route path="/admin" element={<AdminLogin />} />
-        <Route path="/admin/dashboard" element={<AdminDashboard />} />
+        <Route path="/admin" element={<AdminPage />} />
       </Routes>
       {showFooter ? <Footer /> : null}
     </div>

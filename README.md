@@ -20,6 +20,7 @@ cd backend
 cp .env.example .env
 npm install
 npm run seed
+npm run seed:admin
 npm run dev
 ```
 
@@ -32,11 +33,11 @@ npm run dev
 ```
 
 ## Admin Setup
-1. Seed the first admin user (run once):
-   - `POST /api/auth/seed` with `{ "username": "admin", "password": "secret" }`
-2. Login:
-   - `POST /api/auth/login` with `{ "username": "admin", "password": "secret" }`
-3. Use `/admin` in the frontend.
+1. Seed the admin user (run once):
+   - `npm run seed:admin`
+   - Default credentials: `admin / admin123`
+   - Override via env: `ADMIN_USER`, `ADMIN_PASS`
+2. Use `/admin` in the frontend.
 
 ## MongoDB Collections
 - `users`

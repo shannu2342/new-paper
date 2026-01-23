@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { authApi } from '../services/api.js';
 
-const AdminLogin = () => {
+const AdminLogin = ({ onSuccess }) => {
   const navigate = useNavigate();
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
@@ -16,7 +16,10 @@ const AdminLogin = () => {
     try {
       const { token } = await authApi.login({ username, password });
       localStorage.setItem('admin-token', token);
-      navigate('/admin/dashboard');
+      if (onSuccess) {
+        onSuccess();
+      }
+      navigate('/admin');
     } catch (err) {
       setError(err.message || 'లాగిన్ విఫలమైంది');
     } finally {

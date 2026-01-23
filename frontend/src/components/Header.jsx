@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react';
 import { NavLink } from 'react-router-dom';
 import { api } from '../services/api.js';
 import { useLanguage } from '../contexts/LanguageContext.jsx';
-import { useDate } from '../contexts/DateContext.jsx';
 import Logo from './Logo.jsx';
 
 const fallbackItems = [
@@ -29,7 +28,6 @@ const routeMap = {
 
 const Header = () => {
   const { language, setLanguage } = useLanguage();
-  const { selectedDate } = useDate();
   const [items, setItems] = useState(fallbackItems);
   const isTelugu = language === 'te';
 
@@ -64,9 +62,6 @@ const Header = () => {
             Greater Today
             <span className="brand-sub">తెలుగు-ఫస్ట్ న్యూస్</span>
           </div>
-          <span className="edition-date">
-            {isTelugu ? 'సంచిక' : 'Edition'}: {selectedDate}
-          </span>
         </div>
         <nav className="nav-links">
           {items.map((item) => (
@@ -104,28 +99,15 @@ const Header = () => {
             onChange={(event) => setLanguage(event.target.value)}
           >
             <option value="en">English</option>
-            <option value="as">Assamese</option>
-            <option value="bn">Bengali</option>
-            <option value="brx">Bodo</option>
-            <option value="doi">Dogri</option>
-            <option value="gu">Gujarati</option>
-            <option value="hi">Hindi</option>
+            <option value="te">తెలుగు (Telugu)</option>
+            <option value="ta">Tamil</option>
             <option value="kn">Kannada</option>
-            <option value="ks">Kashmiri</option>
-            <option value="kok">Konkani</option>
-            <option value="mai">Maithili</option>
             <option value="ml">Malayalam</option>
-            <option value="mni">Meitei (Manipuri)</option>
+            <option value="hi">Hindi</option>
+            <option value="bn">Bengali</option>
             <option value="mr">Marathi</option>
-            <option value="ne">Nepali</option>
             <option value="or">Odia</option>
             <option value="pa">Punjabi</option>
-            <option value="sa">Sanskrit</option>
-            <option value="sat">Santali</option>
-            <option value="sd">Sindhi</option>
-            <option value="ta">Tamil</option>
-            <option value="te">తెలుగు (Telugu)</option>
-            <option value="ur">Urdu</option>
           </select>
         </div>
       </div>

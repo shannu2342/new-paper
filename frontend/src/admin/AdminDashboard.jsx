@@ -290,7 +290,19 @@ const AdminDashboard = () => {
 
   return (
     <main className="page admin-page">
-      <h1>Admin Panel (అడ్మిన్ ప్యానల్)</h1>
+      <div className="admin-header">
+        <h1>Admin Panel (అడ్మిన్ ప్యానల్)</h1>
+        <button
+          type="button"
+          className="secondary"
+          onClick={() => {
+            localStorage.removeItem('admin-token');
+            window.location.href = '/admin';
+          }}
+        >
+          Logout
+        </button>
+      </div>
       {message ? <div className="notice">{message}</div> : null}
 
       <section className="admin-section">

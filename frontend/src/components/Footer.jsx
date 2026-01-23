@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
 import { api } from '../services/api.js';
 import { useLanguage } from '../contexts/LanguageContext.jsx';
 
@@ -40,7 +41,7 @@ const Footer = () => {
       <div className="footer-bottom">
         <span>© 2026 Telugu-First News. All Rights Reserved.</span>
         <span className="footer-meta">Regd No. 55/2021 · Vijayawada, Andhra Pradesh</span>
-        <a className="admin-link" href="/admin">Admin Login</a>
+        <Link className="admin-link" to="/admin">Admin Login</Link>
       </div>
     </footer>
   );
