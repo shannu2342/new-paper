@@ -11,9 +11,12 @@ const headerItemSchema = new mongoose.Schema(
         'ap',
         'international',
         'national',
+        'editorial',
         'sports',
         'cinema',
-        'other'
+        'special',
+        'other',
+        'epaper'
       ],
       required: true
     },

@@ -10,8 +10,11 @@ const categoryTypeOptions = [
   { value: 'ap', label: 'AP (ఆంధ్రప్రదేశ్)' },
   { value: 'international', label: 'International (అంతర్జాతీయం)' },
   { value: 'national', label: 'National (జాతీయ)' },
+  { value: 'editorial', label: 'Editorial (ఎడిటోరియల్)' },
   { value: 'sports', label: 'Sports (క్రీడలు)' },
   { value: 'cinema', label: 'Cinema (సినిమా)' },
+  { value: 'special', label: 'Special (ప్రత్యేక)' },
+  { value: 'epaper', label: 'E-Paper (ఇ-పేపర్)' },
   { value: 'other', label: 'Other (ఇతరాలు)' }
 ];
 
@@ -46,6 +49,15 @@ const AdminDashboard = () => {
   const [message, setMessage] = useState('');
   const [epaperDate, setEpaperDate] = useState(todayInput());
   const [epaperUrls, setEpaperUrls] = useState({ teluguPdfUrl: '', englishPdfUrl: '' });
+  const [heroImages, setHeroImages] = useState([]);
+  const [heroForm, setHeroForm] = useState({
+    imageUrl: '',
+    articleId: '',
+    title: { en: '', te: '', hi: '' },
+    order: 0,
+    enabled: true
+  });
+  const [editingHeroId, setEditingHeroId] = useState(null);
   const [siteSettings, setSiteSettings] = useState({
     address: { te: '', en: '' },
     contact: { te: '', en: '' },
@@ -56,6 +68,7 @@ const AdminDashboard = () => {
   const authHeaders = useMemo(() => ({ auth: true }), []);
   const panels = [
     { key: 'news', label: 'News Entry (వార్తలు)' },
+    { key: 'hero', label: 'Hero Slider (హీరో స్లైడర్)' },
     { key: 'epaper', label: 'E-Paper (ఇ-పేపర్)' },
     { key: 'footer', label: 'Footer (ఫుటర్)' }
   ];
@@ -77,6 +90,12 @@ const AdminDashboard = () => {
       priority: 0,
       images: []
     });
+  };
+
+  const loadHeroImages = () => {
+    api.get('/hero-images')
+      .then(setHeroImages)
+      .catch(() => setHeroImages([]));
   };
 
   const loadMeta = () => {
@@ -102,6 +121,7 @@ const AdminDashboard = () => {
 
   useEffect(() => {
     loadMeta();
+    loadHeroImages();
   }, []);
 
   useEffect(() => {
@@ -183,6 +203,69 @@ const AdminDashboard = () => {
     setEpaperUrls((prev) => ({ ...prev, [lang]: url }));
   };
 
+  const handleHeroImageUpload = async (event) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+    const url = await handleUpload(file, 'image');
+    setHeroForm((prev) => ({ ...prev, imageUrl: url }));
+  };
+
+  const handleHeroSave = async () => {
+    if (!heroForm.imageUrl) {
+      setMessage('Please upload an image. (చిత్రం అప్‌లోడ్ చేయండి.)');
+      return;
+    }
+    if (!heroForm.title.en || !heroForm.title.te || !heroForm.title.hi) {
+      setMessage('Please fill all language titles. (అన్ని భాషల శీర్షికలను పూరించండి.)');
+      return;
+    }
+
+    try {
+      if (editingHeroId) {
+        await api.put(`/hero-images/${editingHeroId}`, heroForm, authHeaders);
+        setMessage('Hero image updated. (హీరో చిత్రం నవీకరించబడింది.)');
+      } else {
+        await api.post('/hero-images', heroForm, authHeaders);
+        setMessage('Hero image saved. (హీరో చిత్రం సేవ్ అయింది.)');
+      }
+      setHeroForm({
+        imageUrl: '',
+        articleId: '',
+        title: { en: '', te: '', hi: '' },
+        order: 0,
+        enabled: true
+      });
+      setEditingHeroId(null);
+      loadHeroImages();
+    } catch (err) {
+      setMessage(err.message || 'Save failed. (సేవ్ విఫలం)');
+    }
+  };
+
+  const handleEditHero = (hero) => {
+    setEditingHeroId(hero._id);
+    setHeroForm({
+      imageUrl: hero.imageUrl,
+      articleId: hero.articleId?._id || '',
+      title: hero.title,
+      order: hero.order,
+      enabled: hero.enabled
+    });
+  };
+
+  const handleDeleteHero = async (id) => {
+    if (!window.confirm('Are you sure you want to delete this hero image? (ఈ హీరో చిత్రాన్ని తొలగించాలా?')) {
+      return;
+    }
+    try {
+      await api.delete(`/hero-images/${id}`, authHeaders);
+      setMessage('Hero image deleted. (హీరో చిత్రం తొలగించబడింది.)');
+      loadHeroImages();
+    } catch (err) {
+      setMessage(err.message || 'Delete failed. (తొలగించுதல విఫలం)');
+    }
+  };
+
   const handleEpaperSave = async () => {
     await api.post(
       '/epapers',
@@ -231,6 +314,85 @@ const AdminDashboard = () => {
         </aside>
         <div className="admin-content">
           {message ? <div className="notice">{message}</div> : null}
+
+          {activePanel === 'hero' ? (
+            <section className="admin-section">
+              <h2>2. Manage Hero Slider (హీరో స్లైడర్ నిర్వహణ)</h2>
+              <div className="admin-form">
+                <label>
+                  Image (చిత్రం)
+                  <input type="file" accept="image/*" onChange={handleHeroImageUpload} />
+                </label>
+                {heroForm.imageUrl ? (
+                  <div className="preview-box">
+                    <img src={heroForm.imageUrl} alt="Preview" style={{ maxWidth: '200px', maxHeight: '100px' }} />
+                  </div>
+                ) : null}
+                <BilingualInput
+                  label="Title (శీర్షిక)"
+                  value={heroForm.title}
+                  onChange={(next) => setHeroForm((prev) => ({ ...prev, title: next }))}
+                />
+                <label>
+                  Order (స్థానం)
+                  <input
+                    type="number"
+                    value={heroForm.order}
+                    onChange={(e) => setHeroForm((prev) => ({ ...prev, order: Number(e.target.value) }))}
+                  />
+                </label>
+                <label className="checkbox-field">
+                  <input
+                    type="checkbox"
+                    checked={heroForm.enabled}
+                    onChange={(e) => setHeroForm((prev) => ({ ...prev, enabled: e.target.checked }))}
+                  />
+                  Enabled (ప్రయోగంలో ఉంచు)
+                </label>
+                <div className="form-actions">
+                  <button type="button" onClick={handleHeroSave}>
+                    {editingHeroId ? 'Update (మార్చు)' : 'Save (సేవ్)'}
+                  </button>
+                  {editingHeroId ? (
+                    <button type="button" className="secondary" onClick={() => {
+                      setHeroForm({
+                        imageUrl: '',
+                        articleId: '',
+                        title: { en: '', te: '', hi: '' },
+                        order: 0,
+                        enabled: true
+                      });
+                      setEditingHeroId(null);
+                    }}>
+                      Cancel (రద్దు)
+                    </button>
+                  ) : null}
+                </div>
+              </div>
+              <div className="admin-list">
+                <h3>Hero Images (హీరో చిత్రాలు)</h3>
+                {heroImages.map((hero) => (
+                  <div key={hero._id} className="hero-item">
+                    <div className="hero-preview">
+                      <img src={hero.imageUrl} alt="Thumbnail" style={{ width: '80px', height: '40px', objectFit: 'cover' }} />
+                    </div>
+                    <div className="hero-info">
+                      <div className="hero-title">{hero.title.en} ({hero.title.te})</div>
+                      <div className="hero-meta">Order: {hero.order} | {hero.enabled ? 'Enabled' : 'Disabled'}</div>
+                    </div>
+                    <div className="hero-actions">
+                      <button type="button" onClick={() => handleEditHero(hero)}>
+                        Edit
+                      </button>
+                      <button type="button" className="secondary" onClick={() => handleDeleteHero(hero._id)}>
+                        Delete
+                      </button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </section>
+          ) : null}
 
           {activePanel === 'news' ? (
             <section className="admin-section">

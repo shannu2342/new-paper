@@ -2,13 +2,19 @@ const Article = require('../models/Article');
 const { toDateKey } = require('../utils/dateKey');
 
 const listNews = async (req, res) => {
-  const { section, partition, district, date, isBreaking, isFeatured, limit } = req.query;
+  const { section, partition, district, date, isBreaking, isFeatured, limit, categoryType, otherCategoryKey } = req.query;
   const query = {};
 
   if (section) {
     if (section.toUpperCase() === 'AP') {
       query.categoryType = 'ap';
     }
+  }
+  if (categoryType) {
+    query.categoryType = categoryType;
+  }
+  if (otherCategoryKey) {
+    query.otherCategoryKey = otherCategoryKey;
   }
   if (partition) {
     query.partitionCode = partition;

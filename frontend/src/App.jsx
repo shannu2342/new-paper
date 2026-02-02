@@ -26,8 +26,14 @@ const App = () => {
         <Route path="/district/:id" element={<DistrictPage />} />
         <Route path="/international" element={<SectionPage categoryType="international" />} />
         <Route path="/national" element={<SectionPage categoryType="national" />} />
+        <Route path="/editorial" element={<SectionPage categoryType="editorial" />} />
         <Route path="/sports" element={<SectionPage categoryType="sports" />} />
         <Route path="/cinema" element={<SectionPage categoryType="cinema" />} />
+        <Route path="/special" element={<SectionPage categoryType="special" />} />
+        <Route path="/special/health" element={<SectionPage categoryType="special" subcategory="health" />} />
+        <Route path="/special/women" element={<SectionPage categoryType="special" subcategory="women" />} />
+        <Route path="/special/devotional" element={<SectionPage categoryType="special" subcategory="devotional" />} />
+        <Route path="/special/crime" element={<SectionPage categoryType="special" subcategory="crime" />} />
         <Route path="/other" element={<OtherPage />} />
         <Route path="/other/:id" element={<OtherCategoryPage />} />
         <Route path="/articles/:id" element={<ArticlePage />} />

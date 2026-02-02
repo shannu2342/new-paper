@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import ArticleCard from '../components/ArticleCard.jsx';
 import BreakingTicker from '../components/BreakingTicker.jsx';
+import HeroSlider from '../components/HeroSlider.jsx';
 import { api } from '../services/api.js';
 import { useLanguage } from '../contexts/LanguageContext.jsx';
 import { useDate } from '../contexts/DateContext.jsx';
@@ -88,6 +89,7 @@ const HomePage = () => {
           {t('Previous Edition:', 'పాత సంచిక:', 'पिछला संस्करण:')} {selectedDate}
         </div>
       ) : null}
+      <HeroSlider />
       <BreakingTicker items={breaking} />
       <section className="page-header">
         <h1>{t('Home News', 'హోమ్ వార్తలు', 'होम समाचार')}</h1>

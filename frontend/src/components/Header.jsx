@@ -10,9 +10,11 @@ const fallbackItems = [
   { key: 'ap', title: { te: 'ఆంధ్రప్రదేశ్', en: 'Andhra Pradesh' }, order: 2, path: '/ap' },
   { key: 'international', title: { te: 'అంతర్జాతీయం', en: 'International' }, order: 3, path: '/international' },
   { key: 'national', title: { te: 'జాతీయ', en: 'National' }, order: 4, path: '/national' },
-  { key: 'sports', title: { te: 'క్రీడలు', en: 'Sports' }, order: 5, path: '/sports' },
-  { key: 'cinema', title: { te: 'సినిమా', en: 'Cinema' }, order: 6, path: '/cinema' },
-  { key: 'other', title: { te: 'ఇతరాలు', en: 'Other' }, order: 7, path: '/other' }
+  { key: 'editorial', title: { te: 'ఎడిటోరియल్', en: 'Editorial' }, order: 5, path: '/editorial' },
+  { key: 'sports', title: { te: 'క్రీడలు', en: 'Sports' }, order: 6, path: '/sports' },
+  { key: 'cinema', title: { te: 'సినిమా', en: 'Cinema' }, order: 7, path: '/cinema' },
+  { key: 'special', title: { te: 'ప్రత్యేక', en: 'Special' }, order: 8, path: '/special' },
+  { key: 'other', title: { te: 'ఇతరాలు', en: 'Other' }, order: 9, path: '/other' }
 ];
 
 const routeMap = {
@@ -21,9 +23,12 @@ const routeMap = {
   ap: '/ap',
   international: '/international',
   national: '/national',
+  editorial: '/editorial',
   sports: '/sports',
   cinema: '/cinema',
-  other: '/other'
+  special: '/special',
+  other: '/other',
+  epaper: '/epaper'
 };
 
 const hindiNavLabels = {
@@ -32,9 +37,12 @@ const hindiNavLabels = {
   ap: 'आंध्र प्रदेश',
   international: 'अंतरराष्ट्रीय',
   national: 'राष्ट्रीय',
+  editorial: 'संपादकीय',
   sports: 'खेल',
   cinema: 'सिनेमा',
-  other: 'अन्य'
+  special: 'विशेष',
+  other: 'अन्य',
+  epaper: 'ई-पेपर'
 };
 
 const Header = () => {
@@ -42,6 +50,13 @@ const Header = () => {
   const [items, setItems] = useState(fallbackItems);
   const [menuOpen, setMenuOpen] = useState(false);
   const t = (en, te, hi = en) => (language === 'te' ? te : language === 'hi' ? hi : en);
+
+  // Get current date
+  const currentDate = new Date().toLocaleDateString('en-US', {
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric'
+  });
 
   useEffect(() => {
     let active = true;
@@ -55,11 +70,11 @@ const Header = () => {
             path: routeMap[item.key]
           }))
           .sort((a, b) => (a.order ?? 0) - (b.order ?? 0));
-        if (mapped.length === 8) {
+        if (mapped.length === 11) {
           setItems(mapped);
         }
       })
-      .catch(() => {});
+      .catch(() => { });
     return () => {
       active = false;
     };
@@ -67,22 +82,54 @@ const Header = () => {
 
   return (
     <header className="site-header">
-      <div className="header-row">
-        <div className="brand">
-          <Logo />
-          <div className="brand-text">
-            Greater Today
-            <span className="brand-sub">{t('Greater Today News', 'గ్రేటర్ టుడే న్యూస్', 'ग्रेटर टुडे समाचार')}</span>
+      {/* Top Bar */}
+      <div className="header-top">
+        <div className="top-left">
+          <div className="date">{currentDate}</div>
+        </div>
+        <div className="top-center">
+          <div className="brand">
+            <Logo />
+            <div className="brand-text">
+              Greater Today
+              <span className="brand-sub">{t('Greater Today News', 'గ్రేటర్ టుడే న్యూస్', 'ग्रेटर टुडे समाचार')}</span>
+            </div>
           </div>
         </div>
+        <div className="top-right">
+          <div className="e-paper">
+            <NavLink to="/epaper">
+              {t('E-Paper', 'ఇ-పేపర్', 'ई-पेपर')}
+            </NavLink>
+          </div>
+          <div className="language-select">
+            <select
+              id="language"
+              aria-label="Select language"
+              value={language}
+              onChange={(event) => setLanguage(event.target.value)}
+            >
+              <option value="en">English</option>
+              <option value="te">తెలుగు (Telugu)</option>
+              <option value="hi">हिंदी (Hindi)</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      {/* Navigation Bar */}
+      <div className="header-nav">
         <button
           type="button"
           className="menu-toggle"
           onClick={() => setMenuOpen((prev) => !prev)}
           aria-label="Open menu"
         >
-          {menuOpen ? 'Close' : 'Menu'}
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z" />
+          </svg>
         </button>
+
         <nav className={`nav-links ${menuOpen ? 'open' : ''}`}>
           {items.map((item) => (
             <NavLink key={item.key} to={item.path} className="nav-link" onClick={() => setMenuOpen(false)}>
@@ -91,55 +138,7 @@ const Header = () => {
                 : item.title?.[language] || item.title?.en || item.title?.te}
             </NavLink>
           ))}
-          <div className="mobile-social">
-            <a className="social-icon" href="#" aria-label="Facebook" title="Facebook">
-              <svg viewBox="0 0 24 24" aria-hidden="true">
-                <path d="M22 12a10 10 0 1 0-11.6 9.9v-7h-2.6V12h2.6V9.8c0-2.6 1.6-4 3.9-4 1.1 0 2.2.2 2.2.2v2.4h-1.2c-1.2 0-1.6.8-1.6 1.6V12h2.7l-.4 2.9h-2.3v7A10 10 0 0 0 22 12z" />
-              </svg>
-            </a>
-            <a className="social-icon" href="#" aria-label="Instagram" title="Instagram">
-              <svg viewBox="0 0 24 24" aria-hidden="true">
-                <path d="M7 3h10a4 4 0 0 1 4 4v10a4 4 0 0 1-4 4H7a4 4 0 0 1-4-4V7a4 4 0 0 1 4-4zm10 2H7a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2zm-5 3.5A4.5 4.5 0 1 1 7.5 13 4.5 4.5 0 0 1 12 8.5zm0 2A2.5 2.5 0 1 0 14.5 13 2.5 2.5 0 0 0 12 10.5zm5.2-2.7a1 1 0 1 1-1 1 1 1 0 0 1 1-1z" />
-              </svg>
-            </a>
-            <a className="social-icon" href="#" aria-label="Twitter" title="Twitter">
-              <svg viewBox="0 0 24 24" aria-hidden="true">
-                <path d="M18.2 3H21l-6.6 7.5L22 21h-6.1l-4.8-6.2L5.7 21H3l7.1-8.1L2 3h6.2l4.3 5.7L18.2 3zm-1.1 16h1.7L6.9 5H5.1l12 14z" />
-              </svg>
-            </a>
-          </div>
         </nav>
-        <div className="social-links">
-          <a className="social-icon" href="#" aria-label="Facebook" title="Facebook">
-            <svg viewBox="0 0 24 24" aria-hidden="true">
-              <path d="M22 12a10 10 0 1 0-11.6 9.9v-7h-2.6V12h2.6V9.8c0-2.6 1.6-4 3.9-4 1.1 0 2.2.2 2.2.2v2.4h-1.2c-1.2 0-1.6.8-1.6 1.6V12h2.7l-.4 2.9h-2.3v7A10 10 0 0 0 22 12z" />
-            </svg>
-          </a>
-          <a className="social-icon" href="#" aria-label="Instagram" title="Instagram">
-            <svg viewBox="0 0 24 24" aria-hidden="true">
-              <path d="M7 3h10a4 4 0 0 1 4 4v10a4 4 0 0 1-4 4H7a4 4 0 0 1-4-4V7a4 4 0 0 1 4-4zm10 2H7a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2zm-5 3.5A4.5 4.5 0 1 1 7.5 13 4.5 4.5 0 0 1 12 8.5zm0 2A2.5 2.5 0 1 0 14.5 13 2.5 2.5 0 0 0 12 10.5zm5.2-2.7a1 1 0 1 1-1 1 1 1 0 0 1 1-1z" />
-            </svg>
-          </a>
-          <a className="social-icon" href="#" aria-label="Twitter" title="Twitter">
-            <svg viewBox="0 0 24 24" aria-hidden="true">
-              <path d="M18.2 3H21l-6.6 7.5L22 21h-6.1l-4.8-6.2L5.7 21H3l7.1-8.1L2 3h6.2l4.3 5.7L18.2 3zm-1.1 16h1.7L6.9 5H5.1l12 14z" />
-            </svg>
-          </a>
-        </div>
-      </div>
-      <div className="header-lower">
-        <div className="language-select">
-          <select
-            id="language"
-            aria-label="Select language"
-            value={language}
-            onChange={(event) => setLanguage(event.target.value)}
-          >
-            <option value="en">English</option>
-            <option value="te">తెలుగు (Telugu)</option>
-            <option value="hi">हिंदी (Hindi)</option>
-          </select>
-        </div>
       </div>
     </header>
   );

@@ -17,6 +17,7 @@ const languageRoutes = require('./routes/languageRoutes');
 const uploadRoutes = require('./routes/uploadRoutes');
 const siteSettingRoutes = require('./routes/siteSettingRoutes');
 const newsRoutes = require('./routes/newsRoutes');
+const heroImageRoutes = require('./routes/heroImageRoutes');
 
 const app = express();
 
@@ -46,6 +47,7 @@ app.use('/api/language-settings', languageRoutes);
 app.use('/api/uploads', uploadRoutes);
 app.use('/api/site-settings', siteSettingRoutes);
 app.use('/api/news', newsRoutes);
+app.use('/api/hero-images', heroImageRoutes);
 
 const port = process.env.PORT || 4000;
 

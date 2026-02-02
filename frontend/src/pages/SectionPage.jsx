@@ -8,11 +8,17 @@ const titles = {
   amaravati: { te: 'అమరావతి', en: 'Amaravati', hi: 'अमरावती' },
   international: { te: 'అంతర్జాతీయం', en: 'International', hi: 'अंतरराष्ट्रीय' },
   national: { te: 'జాతీయ', en: 'National', hi: 'राष्ट्रीय' },
+  editorial: { te: 'ఎడిటోరియల్', en: 'Editorial', hi: 'संपादकीय' },
   sports: { te: 'క్రీడలు', en: 'Sports', hi: 'खेल' },
-  cinema: { te: 'సినిమా', en: 'Cinema', hi: 'सिनेमा' }
+  cinema: { te: 'సినిమా', en: 'Cinema', hi: 'सिनेमा' },
+  special: { te: 'ప్రత్యేక', en: 'Special', hi: 'विशेष' },
+  health: { te: 'ఆరోగ్యం', en: 'Health', hi: 'स्वास्थ्य' },
+  women: { te: 'మహిళలు', en: 'Women', hi: 'महिलाएं' },
+  devotional: { te: 'ధార్మికం', en: 'Devotional', hi: 'धार्मिक' },
+  crime: { te: 'జناఅపరాధాలు', en: 'Crime', hi: 'अपराध' }
 };
 
-const SectionPage = ({ categoryType }) => {
+const SectionPage = ({ categoryType, subcategory }) => {
   const { language } = useLanguage();
   const t = (en, te, hi = en) => (language === 'te' ? te : language === 'hi' ? hi : en);
   const { selectedDate } = useDate();
@@ -22,8 +28,12 @@ const SectionPage = ({ categoryType }) => {
   useEffect(() => {
     let active = true;
     setLoading(true);
+    let url = `/articles?date=${selectedDate}&categoryType=${categoryType}`;
+    if (subcategory) {
+      url += `&otherCategoryKey=${subcategory}`;
+    }
     api
-      .get(`/articles?date=${selectedDate}&categoryType=${categoryType}`)
+      .get(url)
       .then((data) => {
         if (active) setArticles(data);
       })
@@ -36,9 +46,11 @@ const SectionPage = ({ categoryType }) => {
     return () => {
       active = false;
     };
-  }, [selectedDate, categoryType]);
+  }, [selectedDate, categoryType, subcategory]);
 
-  const title = titles[categoryType]?.[language] || titles[categoryType]?.en || titles[categoryType]?.te || t('News', 'వార్తలు', 'समाचार');
+  const title = subcategory
+    ? (titles[subcategory]?.[language] || titles[subcategory]?.en || titles[subcategory]?.te || t('News', 'వార్తలు', 'समाचार'))
+    : (titles[categoryType]?.[language] || titles[categoryType]?.en || titles[categoryType]?.te || t('News', 'వార్తలు', 'समाचार'));
 
   return (
     <main className="page">

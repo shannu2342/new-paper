@@ -11,20 +11,12 @@ const OtherPage = () => {
   const { selectedDate, setDate } = useDate();
   const navigate = useNavigate();
   const [otherArticles, setOtherArticles] = useState([]);
-  const [epaper, setEpaper] = useState(null);
 
   useEffect(() => {
     api
       .get(`/articles?date=${selectedDate}&categoryType=other`)
       .then(setOtherArticles)
       .catch(() => setOtherArticles([]));
-  }, [selectedDate]);
-
-  useEffect(() => {
-    api
-      .get(`/epapers?date=${selectedDate}`)
-      .then((data) => setEpaper(data[0] || null))
-      .catch(() => setEpaper(null));
   }, [selectedDate]);
 
   const categories = useMemo(() => {
@@ -58,22 +50,7 @@ const OtherPage = () => {
           }}
         />
       </section>
-      <section className="other-actions">
-        {epaper ? (
-          <a
-            className="epaper-link"
-            href={language === 'te' ? epaper.teluguPdfUrl : epaper.englishPdfUrl || epaper.teluguPdfUrl}
-            target="_blank"
-            rel="noreferrer"
-          >
-            {t('Download E-Paper', 'ఇ-పేపర్ డౌన్‌లోడ్', 'ई-पेपर डाउनलोड करें')}
-          </a>
-        ) : (
-          <Link className="epaper-link" to="/epaper">
-            {t('Open E-Paper', 'ఇ-పేపర్ తెరవండి', 'ई-पेपर खोलें')}
-          </Link>
-        )}
-      </section>
+
       <section className="other-categories">
         {categories.length === 0 ? (
           <div className="empty">
