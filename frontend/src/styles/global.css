@@ -1003,7 +1003,7 @@ button:disabled {
   }
 
   .date {
-    font-size: 0.78rem;
+    font-size: 10px;
     font-weight: 600;
     opacity: 0.95;
     white-space: nowrap;
@@ -1031,8 +1031,8 @@ button:disabled {
   }
 
   .brand-logo {
-    width: 52px;
-    height: 52px;
+    width: 80px;
+    height: 80px;
     padding: 4px;
     border-radius: 12px;
   }
@@ -1100,6 +1100,8 @@ button:disabled {
     display: flex;
     flex-direction: row;
     flex-wrap: nowrap;
+    align-items: center;
+    justify-content: flex-start;
     gap: 10px;
     padding: 10px 12px;
     background: transparent;
@@ -1111,11 +1113,19 @@ button:disabled {
     overflow-x: auto;
     overflow-y: hidden;
     -webkit-overflow-scrolling: touch;
+    overscroll-behavior-x: contain;
     scrollbar-width: none;
   }
 
   .nav-links::-webkit-scrollbar {
     display: none;
+  }
+
+  /* Spacer so the first/last pill can fully scroll into view. */
+  .nav-links::before,
+  .nav-links::after {
+    content: '';
+    flex: 0 0 2px;
   }
 
   .nav-links.open {
@@ -1142,6 +1152,7 @@ button:disabled {
   }
 
   .nav-links:not(.open) .nav-link {
+    flex: 0 0 auto;
     color: rgba(255, 255, 255, 0.98);
     text-transform: none;
     letter-spacing: 0;
@@ -1264,8 +1275,8 @@ button:disabled {
   }
 
   .brand-logo {
-    width: 52px;
-    height: 52px;
+    width: 80px;
+    height: 80px;
     padding: 4px;
     border-radius: 12px;
   }
@@ -1285,7 +1296,7 @@ button:disabled {
   }
 
   .date {
-    font-size: 0.76rem;
+    font-size: 10px;
     font-weight: 600;
     opacity: 0.95;
     white-space: nowrap;
