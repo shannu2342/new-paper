@@ -964,7 +964,7 @@ button:disabled {
     flex-direction: column;
     align-items: flex-end;
     justify-content: flex-start;
-    gap: 8px;
+    gap: 6px;
     min-width: 0;
   }
 
@@ -983,11 +983,16 @@ button:disabled {
     border-radius: 10px;
     background: rgba(255, 255, 255, 0.95);
     box-shadow: 0 6px 18px rgba(0, 0, 0, 0.12);
-    width: 40px;
-    height: 40px;
+    width: 46px;
+    height: 46px;
     padding: 0;
     align-items: center;
     justify-content: center;
+  }
+
+  .menu-toggle svg {
+    width: 22px;
+    height: 22px;
   }
 
   .date {
@@ -1042,11 +1047,11 @@ button:disabled {
   }
 
   .language-select select {
-    padding: 8px 10px;
-    font-size: 0.82rem;
-    width: min(160px, 42vw);
+    padding: 6px 8px;
+    font-size: 0.78rem;
+    width: min(148px, 40vw);
     text-overflow: ellipsis;
-    min-height: 40px;
+    min-height: 34px;
   }
 
   .search-bar {
@@ -1193,8 +1198,8 @@ button:disabled {
     background: rgba(255, 255, 255, 0.95);
     border: 1px solid rgba(12, 18, 15, 0.12);
     box-shadow: 0 6px 18px rgba(0, 0, 0, 0.12);
-    width: 40px;
-    height: 40px;
+    width: 48px;
+    height: 48px;
     padding: 0;
     display: inline-flex;
     align-items: center;
@@ -1270,14 +1275,14 @@ button:disabled {
     flex-direction: column;
     align-items: flex-end;
     justify-content: flex-start;
-    gap: 8px;
+    gap: 6px;
   }
 
   .language-select select {
-    padding: 8px 10px;
-    font-size: 0.82rem;
-    width: min(148px, 46vw);
-    min-height: 40px;
+    padding: 6px 8px;
+    font-size: 0.78rem;
+    width: min(136px, 44vw);
+    min-height: 34px;
   }
 
   .top-right .menu-toggle {
@@ -1293,8 +1298,8 @@ button:disabled {
   }
 
   .menu-toggle svg {
-    width: 20px;
-    height: 20px;
+    width: 22px;
+    height: 22px;
   }
 
   .nav-link {
