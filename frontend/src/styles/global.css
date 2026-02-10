@@ -78,7 +78,8 @@ a {
 .top-left {
   display: flex;
   align-items: center;
-  gap: 24px;
+  gap: 14px;
+  flex-wrap: wrap;
 }
 
 .date {
@@ -96,6 +97,7 @@ a {
   border-radius: 6px;
   transition: all 0.3s ease;
   position: relative;
+  white-space: nowrap;
 }
 
 .e-paper a:hover {
@@ -166,7 +168,8 @@ a {
 .top-right {
   display: flex;
   align-items: center;
-  gap: 16px;
+  gap: 12px;
+  flex-wrap: wrap;
 }
 
 .e-books a {
@@ -184,17 +187,26 @@ a {
 .menu-toggle {
   display: none;
   background: none;
-  border: none;
+  border: 1px solid rgba(12, 18, 15, 0.12);
   cursor: pointer;
   padding: 8px;
-  border-radius: 4px;
-  background: #f5f5f5;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.9);
 }
 
 .menu-toggle svg {
   width: 24px;
   height: 24px;
   fill: currentColor;
+}
+
+.menu-toggle:hover {
+  background: #ffffff;
+}
+
+.menu-toggle:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.35);
 }
 
 .search-bar {
@@ -908,10 +920,10 @@ button:disabled {
   .header-top {
     position: relative;
     display: grid;
-    grid-template-columns: 1fr auto 1fr;
+    grid-template-columns: minmax(140px, 1fr) auto minmax(140px, 1fr);
     align-items: center;
-    gap: 10px;
-    padding: 10px 12px;
+    gap: 12px;
+    padding: 12px 12px;
   }
 
   .top-left,
@@ -921,8 +933,11 @@ button:disabled {
   }
 
   .top-left {
+    display: grid;
+    grid-template-rows: auto auto;
+    align-content: center;
     justify-content: flex-start;
-    gap: 10px;
+    gap: 6px;
     flex-wrap: wrap;
     min-width: 0;
   }
@@ -932,6 +947,7 @@ button:disabled {
   }
 
   .top-right {
+    flex-wrap: nowrap;
     justify-content: flex-end;
     gap: 10px;
     min-width: 0;
@@ -951,16 +967,23 @@ button:disabled {
   }
 
   .date {
-    font-size: 0.85rem;
+    font-size: 0.78rem;
+    font-weight: 600;
+    opacity: 0.95;
     white-space: nowrap;
   }
 
   .e-paper a {
-    font-size: 0.9rem;
+    font-size: 0.85rem;
     padding: 6px 10px;
     border-radius: 10px;
     background: rgba(255, 255, 255, 0.16);
     border: 1px solid rgba(255, 255, 255, 0.24);
+  }
+
+  .e-paper a:hover::before,
+  .e-paper a:hover::after {
+    display: none;
   }
 
   .brand {
@@ -974,11 +997,12 @@ button:disabled {
 
   .brand-text {
     line-height: 1.05;
-    font-size: clamp(1.1rem, 5vw, 1.45rem);
+    font-size: clamp(1.05rem, 4.6vw, 1.35rem);
+    letter-spacing: 0.5px;
   }
 
   .brand-sub {
-    font-size: 0.85rem;
+    font-size: 0.8rem;
   }
 
   .top-right {
@@ -988,8 +1012,9 @@ button:disabled {
 
   .language-select select {
     padding: 8px 10px;
-    font-size: 0.85rem;
-    width: auto;
+    font-size: 0.82rem;
+    width: min(160px, 42vw);
+    text-overflow: ellipsis;
   }
 
   .search-bar {
@@ -1008,7 +1033,8 @@ button:disabled {
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
     width: auto;
     position: absolute;
-    top: 8px;
+    top: 0;
+    margin-top: 8px;
     left: 12px;
     right: 12px;
     z-index: 20;
@@ -1118,6 +1144,7 @@ button:disabled {
   .brand-logo {
     width: 40px;
     height: 40px;
+    padding: 4px;
   }
 
   .brand-sub {
@@ -1125,10 +1152,14 @@ button:disabled {
   }
 
   .header-top {
-    grid-template-columns: 1fr auto 1fr;
-    align-items: start;
-    gap: 10px;
-    padding: 10px 10px;
+    /* Two-row layout to avoid squishing the title on very small screens. */
+    grid-template-columns: 1fr 1fr;
+    grid-template-areas:
+      "left right"
+      "center center";
+    align-items: center;
+    gap: 10px 12px;
+    padding: 10px 10px 12px;
   }
 
   .header-nav {
@@ -1142,13 +1173,20 @@ button:disabled {
   }
 
   .top-left {
+    grid-area: left;
+    display: flex;
     flex-direction: column;
     align-items: flex-start;
     gap: 6px;
   }
 
+  .top-center {
+    grid-area: center;
+    justify-self: center;
+  }
+
   .brand-text {
-    font-size: clamp(1.15rem, 8vw, 1.5rem);
+    font-size: clamp(1.05rem, 7.2vw, 1.35rem);
   }
 
   .brand-sub {
@@ -1156,14 +1194,18 @@ button:disabled {
   }
 
   .top-right {
-    flex-direction: column;
-    align-items: flex-end;
-    gap: 6px;
+    grid-area: right;
+    justify-self: end;
+    flex-direction: row;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 8px;
   }
 
   .language-select select {
     padding: 8px 10px;
     font-size: 0.82rem;
+    width: min(140px, 46vw);
   }
 
   .menu-toggle {
