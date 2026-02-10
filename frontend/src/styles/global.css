@@ -968,6 +968,12 @@ button:disabled {
     min-width: 0;
   }
 
+  /* Make the three columns feel like an app header. */
+  .top-left,
+  .top-right {
+    padding-top: 2px;
+  }
+
   .header-nav {
     /* Visually merge nav into the top header on mobile (no extra green bar). */
     position: relative;
@@ -983,16 +989,16 @@ button:disabled {
     border-radius: 10px;
     background: rgba(255, 255, 255, 0.95);
     box-shadow: 0 6px 18px rgba(0, 0, 0, 0.12);
-    width: 60px;
-    height: 60px;
+    width: 36px;
+    height: 36px;
     padding: 0;
     align-items: center;
     justify-content: center;
   }
 
   .menu-toggle svg {
-    width: 28px;
-    height: 28px;
+    width: 18px;
+    height: 18px;
   }
 
   .date {
@@ -1024,8 +1030,10 @@ button:disabled {
   }
 
   .brand-logo {
-    width: 56px;
-    height: 56px;
+    width: 44px;
+    height: 44px;
+    padding: 4px;
+    border-radius: 12px;
   }
 
   .brand-text {
@@ -1046,16 +1054,38 @@ button:disabled {
     order: 2;
   }
 
+  /* Mobile language control: show a compact icon (24x24), but keep native <select> for behavior. */
+  .language-select {
+    width: 24px;
+    height: 24px;
+    position: relative;
+    margin-left: 0;
+  }
+
+  .language-select::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: 6px;
+    background:
+      rgba(255, 255, 255, 0.95)
+      url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%230f1a15' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='12' cy='12' r='10'/%3E%3Cpath d='M2 12h20'/%3E%3Cpath d='M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z'/%3E%3C/svg%3E")
+      center / 16px 16px
+      no-repeat;
+    border: 1px solid rgba(12, 18, 15, 0.12);
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.12);
+  }
+
   .language-select select {
-    width: 60px;
-    height: 60px;
-    padding: 0 24px 0 10px; /* leave room for native arrow */
-    font-size: 0.75rem;
-    font-weight: 700;
-    text-overflow: ellipsis;
-    border-radius: 14px;
-    border-color: rgba(12, 18, 15, 0.12);
-    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.10);
+    position: absolute;
+    inset: 0;
+    width: 24px;
+    height: 24px;
+    opacity: 0;
+    cursor: pointer;
+    padding: 0;
+    border: 0;
+    background: transparent;
   }
 
   .search-bar {
@@ -1192,9 +1222,10 @@ button:disabled {
   }
 
   .brand-logo {
-    width: 60px;
-    height: 60px;
+    width: 44px;
+    height: 44px;
     padding: 4px;
+    border-radius: 12px;
   }
 
   .menu-toggle {
@@ -1202,8 +1233,8 @@ button:disabled {
     background: rgba(255, 255, 255, 0.95);
     border: 1px solid rgba(12, 18, 15, 0.12);
     box-shadow: 0 6px 18px rgba(0, 0, 0, 0.12);
-    width: 64px;
-    height: 64px;
+    width: 36px;
+    height: 36px;
     padding: 0;
     display: inline-flex;
     align-items: center;
@@ -1282,15 +1313,20 @@ button:disabled {
     gap: 6px;
   }
 
+  .language-select {
+    width: 24px;
+    height: 24px;
+  }
+
+  .language-select::before {
+    border-radius: 6px;
+    background-size: 16px 16px;
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.12);
+  }
+
   .language-select select {
-    width: 60px;
-    height: 60px;
-    padding: 0 24px 0 10px;
-    font-size: 0.75rem;
-    font-weight: 700;
-    border-radius: 14px;
-    border-color: rgba(12, 18, 15, 0.12);
-    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.10);
+    width: 24px;
+    height: 24px;
   }
 
   .top-right .menu-toggle {
@@ -1302,12 +1338,12 @@ button:disabled {
   }
 
   .menu-toggle {
-    padding: 0; /* keep the 64x64 button centered */
+    padding: 0; /* keep the icon centered */
   }
 
   .menu-toggle svg {
-    width: 30px;
-    height: 30px;
+    width: 18px;
+    height: 18px;
   }
 
   .nav-link {
