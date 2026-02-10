@@ -955,8 +955,8 @@ button:disabled {
 
   .top-center {
     justify-content: center;
-    align-self: start; /* align logo with the top row (E-Paper + menu) */
-    padding-top: 2px;
+    align-self: center;
+    padding-top: 0;
   }
 
   .top-right {
@@ -983,16 +983,16 @@ button:disabled {
     border-radius: 10px;
     background: rgba(255, 255, 255, 0.95);
     box-shadow: 0 6px 18px rgba(0, 0, 0, 0.12);
-    width: 46px;
-    height: 46px;
+    width: 60px;
+    height: 60px;
     padding: 0;
     align-items: center;
     justify-content: center;
   }
 
   .menu-toggle svg {
-    width: 22px;
-    height: 22px;
+    width: 28px;
+    height: 28px;
   }
 
   .date {
@@ -1024,8 +1024,8 @@ button:disabled {
   }
 
   .brand-logo {
-    width: 44px;
-    height: 44px;
+    width: 56px;
+    height: 56px;
   }
 
   .brand-text {
@@ -1047,11 +1047,15 @@ button:disabled {
   }
 
   .language-select select {
-    padding: 6px 8px;
-    font-size: 0.78rem;
-    width: min(148px, 40vw);
+    width: 60px;
+    height: 60px;
+    padding: 0 24px 0 10px; /* leave room for native arrow */
+    font-size: 0.75rem;
+    font-weight: 700;
     text-overflow: ellipsis;
-    min-height: 34px;
+    border-radius: 14px;
+    border-color: rgba(12, 18, 15, 0.12);
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.10);
   }
 
   .search-bar {
@@ -1188,8 +1192,8 @@ button:disabled {
   }
 
   .brand-logo {
-    width: 44px;
-    height: 44px;
+    width: 60px;
+    height: 60px;
     padding: 4px;
   }
 
@@ -1198,8 +1202,8 @@ button:disabled {
     background: rgba(255, 255, 255, 0.95);
     border: 1px solid rgba(12, 18, 15, 0.12);
     box-shadow: 0 6px 18px rgba(0, 0, 0, 0.12);
-    width: 48px;
-    height: 48px;
+    width: 64px;
+    height: 64px;
     padding: 0;
     display: inline-flex;
     align-items: center;
@@ -1259,8 +1263,8 @@ button:disabled {
 
   .top-center {
     justify-content: center;
-    align-self: start;
-    padding-top: 2px;
+    align-self: center;
+    padding-top: 0;
   }
 
   .brand-text {
@@ -1279,10 +1283,14 @@ button:disabled {
   }
 
   .language-select select {
-    padding: 6px 8px;
-    font-size: 0.78rem;
-    width: min(136px, 44vw);
-    min-height: 34px;
+    width: 60px;
+    height: 60px;
+    padding: 0 24px 0 10px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    border-radius: 14px;
+    border-color: rgba(12, 18, 15, 0.12);
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.10);
   }
 
   .top-right .menu-toggle {
@@ -1294,12 +1302,12 @@ button:disabled {
   }
 
   .menu-toggle {
-    padding: 6px;
+    padding: 0; /* keep the 64x64 button centered */
   }
 
   .menu-toggle svg {
-    width: 22px;
-    height: 22px;
+    width: 30px;
+    height: 30px;
   }
 
   .nav-link {
