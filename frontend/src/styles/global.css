@@ -1031,8 +1031,8 @@ button:disabled {
   }
 
   .brand-logo {
-    width: 80px;
-    height: 80px;
+    width: 92px;
+    height: 92px;
     padding: 4px;
     border-radius: 12px;
   }
@@ -1119,13 +1119,6 @@ button:disabled {
 
   .nav-links::-webkit-scrollbar {
     display: none;
-  }
-
-  /* Spacer so the first/last pill can fully scroll into view. */
-  .nav-links::before,
-  .nav-links::after {
-    content: '';
-    flex: 0 0 2px;
   }
 
   .nav-links.open {
@@ -1275,8 +1268,8 @@ button:disabled {
   }
 
   .brand-logo {
-    width: 80px;
-    height: 80px;
+    width: 92px;
+    height: 92px;
     padding: 4px;
     border-radius: 12px;
   }
