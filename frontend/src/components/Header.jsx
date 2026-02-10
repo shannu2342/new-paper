@@ -86,7 +86,7 @@ const Header = () => {
       <div className="header-top">
         <div className="top-left">
           <div className="date">{currentDate}</div>
-          <div className="e-paper">
+          <div className="e-paper e-paper--mobile">
             <NavLink to="/epaper">{t('E-Paper', 'ఇ-పేపర్', 'ई-पेपर')}</NavLink>
           </div>
         </div>
@@ -100,6 +100,9 @@ const Header = () => {
           </div>
         </div>
         <div className="top-right">
+          <div className="e-paper e-paper--desktop">
+            <NavLink to="/epaper">{t('E-Paper', 'ఇ-పేపర్', 'ई-पेपर')}</NavLink>
+          </div>
           <div className="language-select">
             <select
               id="language"
