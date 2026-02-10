@@ -86,6 +86,9 @@ const Header = () => {
       <div className="header-top">
         <div className="top-left">
           <div className="date">{currentDate}</div>
+          <div className="e-paper">
+            <NavLink to="/epaper">{t('E-Paper', 'ఇ-పేపర్', 'ई-पेपर')}</NavLink>
+          </div>
         </div>
         <div className="top-center">
           <div className="brand">
@@ -97,11 +100,6 @@ const Header = () => {
           </div>
         </div>
         <div className="top-right">
-          <div className="e-paper">
-            <NavLink to="/epaper">
-              {t('E-Paper', 'ఇ-పేపర్', 'ई-पेपर')}
-            </NavLink>
-          </div>
           <div className="language-select">
             <select
               id="language"
@@ -114,22 +112,23 @@ const Header = () => {
               <option value="hi">हिंदी (Hindi)</option>
             </select>
           </div>
+
+          <button
+            type="button"
+            className="menu-toggle"
+            onClick={() => setMenuOpen((prev) => !prev)}
+            aria-label={menuOpen ? 'Close menu' : 'Open menu'}
+            aria-expanded={menuOpen ? 'true' : 'false'}
+          >
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z" />
+            </svg>
+          </button>
         </div>
       </div>
 
       {/* Navigation Bar */}
       <div className="header-nav">
-        <button
-          type="button"
-          className="menu-toggle"
-          onClick={() => setMenuOpen((prev) => !prev)}
-          aria-label="Open menu"
-        >
-          <svg viewBox="0 0 24 24" aria-hidden="true">
-            <path d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z" />
-          </svg>
-        </button>
-
         <nav className={`nav-links ${menuOpen ? 'open' : ''}`}>
           {items.map((item) => (
             <NavLink key={item.key} to={item.path} className="nav-link" onClick={() => setMenuOpen(false)}>
