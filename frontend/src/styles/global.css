@@ -18,11 +18,19 @@
   box-sizing: border-box;
 }
 
+html {
+  -webkit-text-size-adjust: 100%;
+}
+
 body {
   margin: 0;
   font-family: 'Noto Serif Telugu', 'Noto Sans Devanagari', 'Noto Sans', serif;
   background: radial-gradient(circle at top, #f7f9f4 0%, #eef2ea 45%, #e8eee4 100%);
   color: var(--ink);
+}
+
+img {
+  max-width: 100%;
 }
 
 a {
@@ -43,7 +51,6 @@ a {
   position: sticky;
   top: 0;
   z-index: 10;
-  position: relative;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
 }
 
@@ -59,6 +66,7 @@ a {
 
 /* Navigation Bar */
 .header-nav {
+  position: relative; /* anchor the mobile nav dropdown */
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -208,7 +216,7 @@ a {
 }
 
 .nav-links {
-  display: flex !important;
+  display: flex;
   gap: 8px;
   flex: 1;
   justify-content: center;
@@ -889,6 +897,10 @@ button:disabled {
 }
 
 @media (max-width: 768px) {
+  .page {
+    padding: 16px;
+  }
+
   .page-header {
     align-items: flex-start;
   }
@@ -919,7 +931,7 @@ button:disabled {
   .search-bar {
     order: 2;
     flex: 1;
-    min-width: 200px;
+    min-width: 0;
   }
 
   .nav-links {
@@ -969,6 +981,10 @@ button:disabled {
 
   .home-featured {
     grid-template-columns: 1fr;
+  }
+
+  .article-detail {
+    padding: 16px;
   }
 
   .article-card__media img {
@@ -1024,8 +1040,8 @@ button:disabled {
 }
 
 @media (max-width: 480px) {
-  .site-header {
-    padding: 14px 16px;
+  .page {
+    padding: 12px;
   }
 
   .site-header .brand {
@@ -1039,6 +1055,18 @@ button:disabled {
 
   .brand-sub {
     font-size: 0.75rem;
+  }
+
+  .header-top {
+    padding: 10px 12px;
+  }
+
+  .header-nav {
+    padding: 10px 12px;
+  }
+
+  .search-bar {
+    width: 100%;
   }
 
   .nav-link {
