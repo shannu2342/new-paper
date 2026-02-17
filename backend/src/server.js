@@ -18,6 +18,7 @@ const uploadRoutes = require('./routes/uploadRoutes');
 const siteSettingRoutes = require('./routes/siteSettingRoutes');
 const newsRoutes = require('./routes/newsRoutes');
 const heroImageRoutes = require('./routes/heroImageRoutes');
+const notificationRoutes = require('./routes/notificationRoutes');
 
 const app = express();
 
@@ -48,6 +49,7 @@ app.use('/api/uploads', uploadRoutes);
 app.use('/api/site-settings', siteSettingRoutes);
 app.use('/api/news', newsRoutes);
 app.use('/api/hero-images', heroImageRoutes);
+app.use('/api/notifications', notificationRoutes);
 
 const port = process.env.PORT || 4000;
 

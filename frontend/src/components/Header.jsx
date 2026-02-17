@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { NavLink } from 'react-router-dom';
 import { api } from '../services/api.js';
-import { useLanguage } from '../contexts/LanguageContext.jsx';
+import { useTranslator } from '../i18n/useTranslator.js';
 import Logo from './Logo.jsx';
+import PushPrompt from './PushPrompt.jsx';
 
 const fallbackItems = [
   { key: 'home', title: { te: 'హోమ్', en: 'Home' }, order: 0, path: '/' },
@@ -31,25 +32,10 @@ const routeMap = {
   epaper: '/epaper'
 };
 
-const hindiNavLabels = {
-  home: 'होम',
-  amaravati: 'अमरावती',
-  ap: 'आंध्र प्रदेश',
-  international: 'अंतरराष्ट्रीय',
-  national: 'राष्ट्रीय',
-  editorial: 'संपादकीय',
-  sports: 'खेल',
-  cinema: 'सिनेमा',
-  special: 'विशेष',
-  other: 'अन्य',
-  epaper: 'ई-पेपर'
-};
-
 const Header = () => {
-  const { language, setLanguage } = useLanguage();
+  const { language, setLanguage, t } = useTranslator();
   const [items, setItems] = useState(fallbackItems);
   const [menuOpen, setMenuOpen] = useState(false);
-  const t = (en, te, hi = en) => (language === 'te' ? te : language === 'hi' ? hi : en);
 
   // Get current date
   const currentDate = new Date().toLocaleDateString('en-US', {
@@ -87,7 +73,7 @@ const Header = () => {
         <div className="top-left">
           <div className="date">{currentDate}</div>
           <div className="e-paper e-paper--mobile">
-            <NavLink to="/epaper">{t('E-Paper', 'ఇ-పేపర్', 'ई-पेपर')}</NavLink>
+            <NavLink to="/epaper">{t('header.epaper')}</NavLink>
           </div>
         </div>
         <div className="top-center">
@@ -95,18 +81,19 @@ const Header = () => {
             <Logo />
             <div className="brand-text">
               Greater Today
-              <span className="brand-sub">{t('Greater Today News', 'గ్రేటర్ టుడే న్యూస్', 'ग्रेटर टुडे समाचार')}</span>
+              <span className="brand-sub">{t('header.brandSubtitle')}</span>
             </div>
           </div>
         </div>
         <div className="top-right">
+          <PushPrompt />
           <div className="e-paper e-paper--desktop">
-            <NavLink to="/epaper">{t('E-Paper', 'ఇ-పేపర్', 'ई-पेपर')}</NavLink>
+            <NavLink to="/epaper">{t('header.epaper')}</NavLink>
           </div>
           <div className="language-select">
             <select
               id="language"
-              aria-label="Select language"
+              aria-label={t('header.languageAria')}
               value={language}
               onChange={(event) => setLanguage(event.target.value)}
             >
@@ -120,7 +107,7 @@ const Header = () => {
             type="button"
             className="menu-toggle"
             onClick={() => setMenuOpen((prev) => !prev)}
-            aria-label={menuOpen ? 'Close menu' : 'Open menu'}
+            aria-label={menuOpen ? t('header.closeMenu') : t('header.openMenu')}
             aria-expanded={menuOpen ? 'true' : 'false'}
           >
             <svg viewBox="0 0 24 24" aria-hidden="true">
@@ -135,9 +122,7 @@ const Header = () => {
         <nav className={`nav-links ${menuOpen ? 'open' : ''}`}>
           {items.map((item) => (
             <NavLink key={item.key} to={item.path} className="nav-link" onClick={() => setMenuOpen(false)}>
-              {language === 'hi'
-                ? hindiNavLabels[item.key] || item.title?.en || item.title?.te
-                : item.title?.[language] || item.title?.en || item.title?.te}
+              {t(`header.navLabels.${item.key}`, item.title?.[language] || item.title?.en || item.title?.te)}
             </NavLink>
           ))}
         </nav>

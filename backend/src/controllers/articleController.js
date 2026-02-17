@@ -1,4 +1,5 @@
 const Article = require('../models/Article');
+const jwt = require('jsonwebtoken');
 const { toDateKey } = require('../utils/dateKey');
 const { isValidPartition, isValidDistrict } = require('../utils/apData');
 
@@ -9,8 +10,20 @@ const toKey = (value) =>
     .trim()
     .replace(/\s+/g, '-');
 
+const hasValidAuthToken = (req) => {
+  try {
+    const authHeader = req.headers.authorization || '';
+    const token = authHeader.startsWith('Bearer ') ? authHeader.slice(7) : null;
+    if (!token) return false;
+    jwt.verify(token, process.env.JWT_SECRET);
+    return true;
+  } catch (error) {
+    return false;
+  }
+};
+
 const listArticles = async (req, res) => {
-  const { date, categoryType, apRegion, district, category, otherCategoryKey, isBreaking, isFeatured, limit } = req.query;
+  const { date, categoryType, apRegion, district, category, otherCategoryKey, isBreaking, isFeatured, limit, status, includeDraft } = req.query;
   const { partition, districtCode } = req.query;
   const query = {};
   if (date) {
@@ -43,6 +56,11 @@ const listArticles = async (req, res) => {
   if (isFeatured === 'true') {
     query.isFeatured = true;
   }
+  if (status && ['draft', 'published'].includes(status)) {
+    query.status = status;
+  } else if (!(includeDraft === 'true' && hasValidAuthToken(req))) {
+    query.$or = [{ status: 'published' }, { status: { $exists: false } }];
+  }
   const articles = await Article.find(query)
     .populate('category')
     .populate('apRegion')
@@ -68,6 +86,7 @@ const createArticle = async (req, res) => {
   const payload = { ...req.body };
   payload.dateKey = toDateKey(payload.publishedAt || payload.dateKey);
   payload.publishedAt = payload.publishedAt ? new Date(payload.publishedAt) : new Date();
+  payload.status = payload.status === 'draft' ? 'draft' : 'published';
   if (payload.categoryType === 'ap') {
     if (!payload.partitionCode || !payload.districtCode) {
       return res.status(400).json({ message: 'AP articles require partition and district.' });
@@ -93,6 +112,9 @@ const updateArticle = async (req, res) => {
   const payload = { ...req.body };
   if (payload.publishedAt || payload.dateKey) {
     payload.dateKey = toDateKey(payload.publishedAt || payload.dateKey);
+  }
+  if (payload.status) {
+    payload.status = payload.status === 'draft' ? 'draft' : 'published';
   }
   if (payload.categoryType === 'ap') {
     if (!payload.partitionCode || !payload.districtCode) {

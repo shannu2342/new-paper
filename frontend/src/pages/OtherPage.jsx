@@ -1,13 +1,13 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { api } from '../services/api.js';
-import { useLanguage } from '../contexts/LanguageContext.jsx';
 import DateSelector from '../components/DateSelector.jsx';
 import { useDate } from '../contexts/DateContext.jsx';
+import { useTranslator } from '../i18n/useTranslator.js';
+import EmptyState from '../components/EmptyState.jsx';
 
 const OtherPage = () => {
-  const { language } = useLanguage();
-  const t = (en, te, hi = en) => (language === 'te' ? te : language === 'hi' ? hi : en);
+  const { language, t } = useTranslator();
   const { selectedDate, setDate } = useDate();
   const navigate = useNavigate();
   const [otherArticles, setOtherArticles] = useState([]);
@@ -37,12 +37,12 @@ const OtherPage = () => {
   return (
     <main className="page">
       <section className="page-header">
-        <h1>{t('Other', 'ఇతరాలు', 'अन्य')}</h1>
+        <h1>{t('otherPage.title')}</h1>
       </section>
       <section className="archive-panel">
-        <h2>{t('Previous Editions', 'పాత సంచికలు', 'पिछले संस्करण')}</h2>
+        <h2>{t('otherPage.previousEditions')}</h2>
         <DateSelector
-          label={t('Select Date', 'తేదీ ఎంచుకోండి', 'तारीख चुनें')}
+          label={t('otherPage.selectDate')}
           value={selectedDate}
           onChange={(value) => {
             setDate(value);
@@ -53,9 +53,12 @@ const OtherPage = () => {
 
       <section className="other-categories">
         {categories.length === 0 ? (
-          <div className="empty">
-            {t('No categories for this date.', 'ఈ తేదీకి కేటగిరీలు లేవు.', 'इस तारीख के लिए श्रेणियां नहीं हैं।')}
-          </div>
+          <EmptyState
+            title={t('otherPage.noCategoriesForDate')}
+            description="Choose another date to explore archives."
+            actionLabel="Home"
+            actionTo="/"
+          />
         ) : null}
         {categories.map((category) => (
           <Link key={category.key} to={`/other/${category.key}`} className="other-category">

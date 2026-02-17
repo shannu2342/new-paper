@@ -1,14 +1,22 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { authApi } from '../services/api.js';
+import { useTranslator } from '../i18n/useTranslator.js';
 
 const AdminLogin = ({ onSuccess }) => {
   const navigate = useNavigate();
+  const { t } = useTranslator();
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const [seeding, setSeeding] = useState(false);
+
+  useEffect(() => {
+    if (localStorage.getItem('admin-token')) {
+      navigate('/admin', { replace: true });
+    }
+  }, [navigate]);
 
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -23,9 +31,9 @@ const AdminLogin = ({ onSuccess }) => {
       navigate('/admin');
     } catch (err) {
       const msg = err.message && err.message.toLowerCase().includes('fetch')
-        ? 'API not reachable. Start backend or set VITE_API_URL.'
+        ? t('admin.apiNotReachable')
         : err.message;
-      setError(msg || 'లాగిన్ విఫలమైంది');
+      setError(msg || t('admin.loginFailed'));
     } finally {
       setLoading(false);
     }
@@ -43,9 +51,9 @@ const AdminLogin = ({ onSuccess }) => {
       navigate('/admin');
     } catch (err) {
       const msg = err.message && err.message.toLowerCase().includes('fetch')
-        ? 'API not reachable. Start backend or set VITE_API_URL.'
+        ? t('admin.apiNotReachable')
         : err.message;
-      setError(msg || 'Seed failed');
+      setError(msg || t('admin.seedFailed'));
     } finally {
       setSeeding(false);
     }
@@ -53,22 +61,22 @@ const AdminLogin = ({ onSuccess }) => {
 
   return (
     <main className="page admin-page">
-      <h1>Admin Login (అడ్మిన్ లాగిన్)</h1>
+      <h1>{t('admin.loginTitle')}</h1>
       <form className="admin-form" onSubmit={handleSubmit}>
         <label>
-          Username (వినియోగదారు పేరు)
+          {t('admin.username')}
           <input value={username} onChange={(e) => setUsername(e.target.value)} />
         </label>
         <label>
-          Password (పాస్వర్డ్)
+          {t('admin.password')}
           <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} />
         </label>
         {error ? <div className="form-error">{error}</div> : null}
         <button type="submit" disabled={loading}>
-          {loading ? 'Please wait...' : 'Login'}
+          {loading ? t('admin.pleaseWait') : t('admin.login')}
         </button>
         <button type="button" className="secondary" onClick={handleSeed} disabled={seeding}>
-          {seeding ? 'Creating admin...' : 'Create Admin (admin/admin123)'}
+          {seeding ? t('admin.creatingAdmin') : t('admin.createAdmin')}
         </button>
       </form>
     </main>

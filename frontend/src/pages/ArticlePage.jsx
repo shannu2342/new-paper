@@ -1,22 +1,39 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { api } from '../services/api.js';
-import { useLanguage } from '../contexts/LanguageContext.jsx';
+import { useTranslator } from '../i18n/useTranslator.js';
+import EmptyState from '../components/EmptyState.jsx';
+import { SkeletonGrid } from '../components/SkeletonCard.jsx';
 
 const ArticlePage = () => {
   const { id } = useParams();
-  const { language } = useLanguage();
-  const t = (en, te, hi = en) => (language === 'te' ? te : language === 'hi' ? hi : en);
+  const { language, t } = useTranslator();
   const [article, setArticle] = useState(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    api.get(`/articles/${id}`).then(setArticle).catch(() => setArticle(null));
+    setLoading(true);
+    api
+      .get(`/articles/${id}`)
+      .then(setArticle)
+      .catch(() => setArticle(null))
+      .finally(() => setLoading(false));
   }, [id]);
+
+  if (loading) {
+    return (
+      <main className="page">
+        <section className="article-grid">
+          <SkeletonGrid count={1} />
+        </section>
+      </main>
+    );
+  }
 
   if (!article) {
     return (
       <main className="page">
-        <div className="empty">{t('Article not found.', 'వార్త కనబడలేదు.', 'लेख नहीं मिला।')}</div>
+        <EmptyState title={t('articlePage.notFound')} description="Go back and explore latest stories." actionLabel="Home" actionTo="/" />
       </main>
     );
   }
@@ -32,11 +49,11 @@ const ArticlePage = () => {
         {article.images?.length ? (
           <div className="article-gallery">
             {article.images.map((img) => (
-              <img key={img} src={img} alt={title} />
+              <img key={img} src={img} alt={title} loading="lazy" decoding="async" />
             ))}
           </div>
         ) : null}
-        <div className="article-body">{content}</div>
+        <div className="article-body" dangerouslySetInnerHTML={{ __html: content || '' }} />
       </article>
     </main>
   );

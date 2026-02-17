@@ -1,14 +1,15 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import ArticleCard from '../components/ArticleCard.jsx';
+import EmptyState from '../components/EmptyState.jsx';
+import { SkeletonGrid } from '../components/SkeletonCard.jsx';
 import { api } from '../services/api.js';
-import { useLanguage } from '../contexts/LanguageContext.jsx';
 import { useDate } from '../contexts/DateContext.jsx';
+import { useTranslator } from '../i18n/useTranslator.js';
 
 const OtherCategoryPage = () => {
   const { id } = useParams();
-  const { language } = useLanguage();
-  const t = (en, te, hi = en) => (language === 'te' ? te : language === 'hi' ? hi : en);
+  const { t } = useTranslator();
   const { selectedDate } = useDate();
   const [articles, setArticles] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -42,12 +43,12 @@ const OtherCategoryPage = () => {
   return (
     <main className="page">
       <section className="page-header">
-        <h1>{t('Other News', 'ఇతర వార్తలు', 'अन्य समाचार')}</h1>
+        <h1>{t('otherCategoryPage.title')}</h1>
       </section>
       <section className="article-grid">
-        {loading ? <div className="empty">{t('Loading...', 'లోడ్ అవుతోంది...', 'लोड हो रहा है...')}</div> : null}
+        {loading ? <SkeletonGrid count={4} /> : null}
         {!loading && articles.length === 0 ? (
-          <div className="empty">{t('No news for this date.', 'ఈ తేదీకి వార్తలు లేవు.', 'इस तारीख के लिए कोई समाचार नहीं है।')}</div>
+          <EmptyState title={t('common.noNewsForDate')} description="Try another category or date." actionLabel="Other" actionTo="/other" />
         ) : null}
         {articles.map((article) => (
           <ArticleCard key={article._id} article={article} />

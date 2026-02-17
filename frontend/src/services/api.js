@@ -29,10 +29,17 @@ export const api = {
     request(path, { ...options, method: 'POST', body: body instanceof FormData ? body : JSON.stringify(body) }),
   put: (path, body, options) =>
     request(path, { ...options, method: 'PUT', body: body instanceof FormData ? body : JSON.stringify(body) }),
-  del: (path, options) => request(path, { ...options, method: 'DELETE' })
+  del: (path, options) => request(path, { ...options, method: 'DELETE' }),
+  delete: (path, options) => request(path, { ...options, method: 'DELETE' })
 };
 
 export const authApi = {
   login: (payload) => api.post('/auth/login', payload),
   seed: (payload) => api.post('/auth/seed', payload)
+};
+
+export const notificationsApi = {
+  publicKey: () => api.get('/notifications/public-key'),
+  subscribe: (payload) => api.post('/notifications/subscribe', payload),
+  broadcast: (payload, options) => api.post('/notifications/broadcast', payload, options)
 };

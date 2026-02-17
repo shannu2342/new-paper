@@ -1,15 +1,15 @@
 import React, { useState } from 'react';
-import AdminLogin from './AdminLogin.jsx';
+import { Navigate } from 'react-router-dom';
 import AdminDashboard from './AdminDashboard.jsx';
 
 const AdminPage = () => {
   const [hasToken, setHasToken] = useState(Boolean(localStorage.getItem('admin-token')));
 
   if (!hasToken) {
-    return <AdminLogin onSuccess={() => setHasToken(true)} />;
+    return <Navigate to="/admin/login" replace />;
   }
 
-  return <AdminDashboard />;
+  return <AdminDashboard onLogout={() => setHasToken(false)} />;
 };
 
 export default AdminPage;

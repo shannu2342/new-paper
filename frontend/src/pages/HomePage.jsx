@@ -2,14 +2,15 @@ import React, { useEffect, useState } from 'react';
 import ArticleCard from '../components/ArticleCard.jsx';
 import BreakingTicker from '../components/BreakingTicker.jsx';
 import HeroSlider from '../components/HeroSlider.jsx';
+import EmptyState from '../components/EmptyState.jsx';
+import { SkeletonGrid } from '../components/SkeletonCard.jsx';
 import { api } from '../services/api.js';
-import { useLanguage } from '../contexts/LanguageContext.jsx';
 import { useDate } from '../contexts/DateContext.jsx';
 import { todayInput } from '../utils/date.js';
+import { useTranslator } from '../i18n/useTranslator.js';
 
 const HomePage = () => {
-  const { language } = useLanguage();
-  const t = (en, te, hi = en) => (language === 'te' ? te : language === 'hi' ? hi : en);
+  const { t } = useTranslator();
   const { selectedDate } = useDate();
   const isPreviousEdition = selectedDate !== todayInput();
   const [articles, setArticles] = useState([]);
@@ -86,36 +87,46 @@ const HomePage = () => {
     <main className="page">
       {isPreviousEdition ? (
         <div className="edition-banner">
-          {t('Previous Edition:', 'పాత సంచిక:', 'पिछला संस्करण:')} {selectedDate}
+          {t('homePage.previousEdition')} {selectedDate}
         </div>
       ) : null}
       <HeroSlider />
       <BreakingTicker items={breaking} />
       <section className="page-header">
-        <h1>{t('Home News', 'హోమ్ వార్తలు', 'होम समाचार')}</h1>
+        <h1>{t('homePage.title')}</h1>
       </section>
       <section className="home-featured">
         <div className="featured-card">
-          <h2>{t('Featured Story', 'ప్రధాన వార్త', 'प्रमुख खबर')}</h2>
+          <h2>{t('homePage.featuredStory')}</h2>
           {featured ? (
             <ArticleCard article={featured} />
           ) : (
-            <div className="empty">{t('No featured story yet.', 'ప్రధాన వార్త లేదు.', 'अभी कोई प्रमुख खबर नहीं है।')}</div>
+            <EmptyState
+              title={t('homePage.noFeaturedStory')}
+              description="Try another section for more highlights."
+              actionLabel="Go to Top News"
+              actionTo="/"
+            />
           )}
         </div>
         <div className="latest-list">
-          <h2>{t('Latest Updates', 'తాజా వార్తలు', 'ताज़ा अपडेट')}</h2>
+          <h2>{t('homePage.latestUpdates')}</h2>
           {latest.length === 0 ? (
-            <div className="empty">{t('No latest updates.', 'తాజా వార్తలు లేవు.', 'कोई ताज़ा अपडेट नहीं है।')}</div>
+            <div className="empty">{t('homePage.noLatestUpdates')}</div>
           ) : (
             latest.map((item) => <ArticleCard key={item._id} article={item} />)
           )}
         </div>
       </section>
       <section className="article-grid">
-        {loading ? <div className="empty">{t('Loading...', 'లోడ్ అవుతోంది...', 'लोड हो रहा है...')}</div> : null}
+        {loading ? <SkeletonGrid count={6} /> : null}
         {!loading && articles.length === 0 ? (
-          <div className="empty">{t('No news for this date.', 'ఈ తేదీకి వార్తలు లేవు.', 'इस तारीख के लिए कोई समाचार नहीं है।')}</div>
+          <EmptyState
+            title={t('common.noNewsForDate')}
+            description="Choose another date or return to today's edition."
+            actionLabel="Today's News"
+            actionTo="/"
+          />
         ) : null}
         {articles.map((article) => (
           <ArticleCard key={article._id} article={article} />

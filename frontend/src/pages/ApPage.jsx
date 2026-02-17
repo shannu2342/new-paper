@@ -1,13 +1,14 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import ArticleCard from '../components/ArticleCard.jsx';
+import EmptyState from '../components/EmptyState.jsx';
+import { SkeletonGrid } from '../components/SkeletonCard.jsx';
 import { api } from '../services/api.js';
-import { useLanguage } from '../contexts/LanguageContext.jsx';
 import { useDate } from '../contexts/DateContext.jsx';
 import { partitions, districtsByPartition } from '../utils/apData.js';
+import { useTranslator } from '../i18n/useTranslator.js';
 
 const ApPage = () => {
-  const { language } = useLanguage();
-  const t = (en, te, hi = en) => (language === 'te' ? te : language === 'hi' ? hi : en);
+  const { t } = useTranslator();
   const { selectedDate } = useDate();
   const [selectedRegion, setSelectedRegion] = useState('');
   const [selectedDistrict, setSelectedDistrict] = useState('');
@@ -51,11 +52,11 @@ const ApPage = () => {
   return (
     <main className="page">
       <section className="page-header">
-        <h1>{t('Andhra Pradesh', 'ఆంధ్రప్రదేశ్', 'आंध्र प्रदेश')}</h1>
+        <h1>{t('apPage.title')}</h1>
       </section>
       <section className="filters">
         <label>
-          {t('Select Region', 'ప్రాంతం', 'क्षेत्र चुनें')}
+          {t('apPage.selectRegion')}
           <select
             value={selectedRegion}
             onChange={(e) => {
@@ -63,7 +64,7 @@ const ApPage = () => {
               setSelectedDistrict('');
             }}
           >
-            <option value="">{t('Select', 'ఎంచుకోండి', 'चुनें')}</option>
+            <option value="">{t('common.select')}</option>
             {partitions.map((partition) => (
               <option key={partition.code} value={partition.code}>
                 {partition.name}
@@ -73,9 +74,9 @@ const ApPage = () => {
         </label>
         {selectedRegion ? (
           <label>
-            {t('Select District', 'జిల్లా', 'जिला चुनें')}
+            {t('apPage.selectDistrict')}
             <select value={selectedDistrict} onChange={(e) => setSelectedDistrict(e.target.value)}>
-              <option value="">{t('Select', 'ఎంచుకోండి', 'चुनें')}</option>
+              <option value="">{t('common.select')}</option>
               {districtOptions.map((district) => (
                 <option key={district.code} value={district.code}>
                   {district.name}
@@ -87,15 +88,16 @@ const ApPage = () => {
       </section>
       <section className="article-grid">
         {!selectedDistrict ? (
-          <div className="empty">
-            {t('Please select a district to view news.', 'ముందు జిల్లా ఎంచుకోండి.', 'कृपया समाचार देखने के लिए जिला चुनें।')}
-          </div>
+          <EmptyState
+            title={t('apPage.pickDistrictPrompt')}
+            description="Choose region and district to load localized news."
+          />
         ) : null}
         {selectedDistrict && loading ? (
-          <div className="empty">{t('Loading...', 'లోడ్ అవుతోంది...', 'लोड हो रहा है...')}</div>
+          <SkeletonGrid count={4} />
         ) : null}
         {selectedDistrict && !loading && articles.length === 0 ? (
-          <div className="empty">{t('No news for this date.', 'ఈ తేదీకి వార్తలు లేవు.', 'इस तारीख के लिए कोई समाचार नहीं है।')}</div>
+          <EmptyState title={t('common.noNewsForDate')} description="Try another district or date." />
         ) : null}
         {articles.map((article) => (
           <ArticleCard key={article._id} article={article} />

@@ -1,13 +1,12 @@
 import React from 'react';
-import { useLanguage } from '../contexts/LanguageContext.jsx';
+import { useTranslator } from '../i18n/useTranslator.js';
 
 const LanguageSwitch = () => {
-  const { language, setLanguage } = useLanguage();
-  const t = (en, te, hi = en) => (language === 'te' ? te : language === 'hi' ? hi : en);
+  const { language, setLanguage, t } = useTranslator();
 
   return (
     <div className="language-switch">
-      <h3>{t('Switch Language', 'భాష మార్చండి', 'भाषा बदलें')}</h3>
+      <h3>{t('languageSwitch.title')}</h3>
       <div className="switch-buttons">
         <button type="button" className={language === 'en' ? 'active' : ''} onClick={() => setLanguage('en')}>
           English

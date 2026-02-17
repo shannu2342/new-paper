@@ -36,7 +36,13 @@ const articleSchema = new mongoose.Schema(
     isBreaking: { type: Boolean, default: false },
     isFeatured: { type: Boolean, default: false },
     priority: { type: Number, default: 0 },
-    enabled: { type: Boolean, default: true }
+    enabled: { type: Boolean, default: true },
+    status: {
+      type: String,
+      enum: ['draft', 'published'],
+      default: 'published',
+      index: true
+    }
   },
   { timestamps: true }
 );

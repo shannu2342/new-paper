@@ -1,8 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import ArticleCard from '../components/ArticleCard.jsx';
+import EmptyState from '../components/EmptyState.jsx';
+import { SkeletonGrid } from '../components/SkeletonCard.jsx';
 import { api } from '../services/api.js';
-import { useLanguage } from '../contexts/LanguageContext.jsx';
 import { useDate } from '../contexts/DateContext.jsx';
+import { useTranslator } from '../i18n/useTranslator.js';
 
 const titles = {
   amaravati: { te: 'అమరావతి', en: 'Amaravati', hi: 'अमरावती' },
@@ -19,8 +21,7 @@ const titles = {
 };
 
 const SectionPage = ({ categoryType, subcategory }) => {
-  const { language } = useLanguage();
-  const t = (en, te, hi = en) => (language === 'te' ? te : language === 'hi' ? hi : en);
+  const { language, t } = useTranslator();
   const { selectedDate } = useDate();
   const [articles, setArticles] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -49,8 +50,8 @@ const SectionPage = ({ categoryType, subcategory }) => {
   }, [selectedDate, categoryType, subcategory]);
 
   const title = subcategory
-    ? (titles[subcategory]?.[language] || titles[subcategory]?.en || titles[subcategory]?.te || t('News', 'వార్తలు', 'समाचार'))
-    : (titles[categoryType]?.[language] || titles[categoryType]?.en || titles[categoryType]?.te || t('News', 'వార్తలు', 'समाचार'));
+    ? (titles[subcategory]?.[language] || titles[subcategory]?.en || titles[subcategory]?.te || t('sectionPage.fallbackTitle'))
+    : (titles[categoryType]?.[language] || titles[categoryType]?.en || titles[categoryType]?.te || t('sectionPage.fallbackTitle'));
 
   return (
     <main className="page">
@@ -58,9 +59,14 @@ const SectionPage = ({ categoryType, subcategory }) => {
         <h1>{title}</h1>
       </section>
       <section className="article-grid">
-        {loading ? <div className="empty">{t('Loading...', 'లోడ్ అవుతోంది...', 'लोड हो रहा है...')}</div> : null}
+        {loading ? <SkeletonGrid count={6} /> : null}
         {!loading && articles.length === 0 ? (
-          <div className="empty">{t('No news for this date.', 'ఈ తేదీకి వార్తలు లేవు.', 'इस तारीख के लिए कोई समाचार नहीं है।')}</div>
+          <EmptyState
+            title={t('common.noNewsForDate')}
+            description="Try a different section or date."
+            actionLabel="Back Home"
+            actionTo="/"
+          />
         ) : null}
         {articles.map((article) => (
           <ArticleCard key={article._id} article={article} />

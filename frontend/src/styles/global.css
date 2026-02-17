@@ -1,17 +1,25 @@
+@import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700&family=Manrope:wght@400;500;600;700;800&display=swap');
+
 :root {
-  --bg: #f4f6f2;
+  --bg: #eff4ef;
   --ink: #0f1a15;
-  --accent: #f1b21b;
-  --accent-2: #8bc34a;
-  --accent-3: #689f38;
-  --card: #ffffff;
-  --line: #d7e1d7;
+  --accent: #e65f2b;
+  --accent-2: #2f8f4e;
+  --accent-3: #1f6d3a;
+  --card: rgba(255, 255, 255, 0.82);
+  --line: #d4dfd5;
   --muted: #5c6b60;
-  --shadow: 0 14px 34px rgba(12, 18, 15, 0.18);
-  --header-bg: #8bc34a;
-  --footer-bg: #162b4b;
+  --shadow: 0 18px 45px rgba(9, 18, 12, 0.14);
+  --header-bg: #2f8f4e;
+  --footer-bg: #0f2b24;
   --header-text: #ffffff;
   --primary-red: #dc2626;
+  --radius-xl: 20px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 24px;
+  --space-6: 32px;
 }
 
 * {
@@ -24,9 +32,13 @@ html {
 
 body {
   margin: 0;
-  font-family: 'Noto Serif Telugu', 'Noto Sans Devanagari', 'Noto Sans', serif;
-  background: radial-gradient(circle at top, #f7f9f4 0%, #eef2ea 45%, #e8eee4 100%);
+  font-family: 'Manrope', 'Noto Sans Telugu', 'Noto Sans Devanagari', sans-serif;
+  background:
+    radial-gradient(circle at 5% -10%, rgba(230, 95, 43, 0.14), transparent 35%),
+    radial-gradient(circle at 95% 15%, rgba(47, 143, 78, 0.16), transparent 30%),
+    linear-gradient(180deg, #f8fbf7 0%, #eff4ef 100%);
   color: var(--ink);
+  line-height: 1.6;
 }
 
 img {
@@ -51,7 +63,7 @@ a {
   position: sticky;
   top: 0;
   z-index: 10;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 8px 30px rgba(9, 31, 18, 0.18);
 }
 
 /* Top Bar */
@@ -61,7 +73,7 @@ a {
   justify-content: space-between;
   padding: 20px 24px;
   border-bottom: 1px solid rgba(255, 255, 255, 0.2);
-  background: #8bc34a;
+  background: linear-gradient(120deg, #2f8f4e 0%, #3fa35f 55%, #2f8f4e 100%);
 }
 
 /* Navigation Bar */
@@ -71,8 +83,8 @@ a {
   align-items: center;
   justify-content: space-between;
   padding: 10px 24px;
-  background: #8bc34a;
-  border-bottom: 2px solid #689f38;
+  background: rgba(0, 0, 0, 0.08);
+  border-bottom: 2px solid rgba(255, 255, 255, 0.15);
 }
 
 .top-left {
@@ -156,8 +168,9 @@ a {
 }
 
 .brand-text {
-  font-size: 1.7rem;
-  font-weight: 800;
+  font-family: 'Fraunces', 'Noto Serif Telugu', serif;
+  font-size: 1.6rem;
+  font-weight: 700;
   letter-spacing: 1px;
   color: var(--header-text);
   text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
@@ -320,7 +333,9 @@ a {
 
 .page-header h1 {
   margin: 0;
-  font-size: 1.8rem;
+  font-family: 'Fraunces', 'Noto Serif Telugu', serif;
+  font-size: clamp(1.45rem, 2.3vw, 2rem);
+  letter-spacing: 0.2px;
 }
 
 .breaking-ticker {
@@ -379,7 +394,8 @@ a {
 .featured-card,
 .latest-list {
   background: var(--card);
-  border-radius: 18px;
+  backdrop-filter: blur(8px);
+  border-radius: var(--radius-xl);
   padding: 16px;
   border: 1px solid var(--line);
   box-shadow: var(--shadow);
@@ -395,7 +411,7 @@ a {
 }
 
 .archive-panel {
-  background: #f6f9f2;
+  background: linear-gradient(140deg, rgba(255, 255, 255, 0.85), rgba(242, 248, 243, 0.8));
   border: 1px dashed var(--line);
   border-radius: 18px;
   padding: 16px;
@@ -438,7 +454,7 @@ textarea {
 
 .article-card {
   background: var(--card);
-  border-radius: 18px;
+  border-radius: var(--radius-xl);
   padding: 16px;
   border: 1px solid var(--line);
   box-shadow: var(--shadow);
@@ -458,7 +474,8 @@ textarea {
 }
 
 .article-card:hover {
-  transform: translateY(-3px);
+  transform: translateY(-5px);
+  box-shadow: 0 22px 40px rgba(7, 24, 13, 0.2);
 }
 
 .article-card h3 {
@@ -473,6 +490,7 @@ textarea {
 
 .article-detail {
   background: var(--card);
+  backdrop-filter: blur(8px);
   padding: 24px;
   border-radius: 20px;
   border: 1px solid var(--line);
@@ -584,10 +602,17 @@ button {
   padding: 12px 18px;
   border-radius: 12px;
   border: none;
-  background: var(--accent);
+  background: linear-gradient(135deg, var(--accent) 0%, #f17f52 100%);
   color: #fff;
   font-weight: 700;
   cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.download-button:hover,
+button:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 10px 24px rgba(230, 95, 43, 0.34);
 }
 
 button.secondary {
@@ -605,6 +630,46 @@ button:disabled {
   border-radius: 14px;
   border: 1px dashed var(--line);
   color: var(--muted);
+}
+
+.empty--rich h3 {
+  margin: 0 0 8px;
+}
+
+.empty--rich p {
+  margin: 0 0 12px;
+}
+
+.empty--error {
+  border-style: solid;
+}
+
+.skeleton {
+  background: linear-gradient(90deg, #e7efea 25%, #f2f7f3 37%, #e7efea 63%);
+  background-size: 400% 100%;
+  animation: shimmer 1.4s ease infinite;
+  border-radius: 10px;
+}
+
+.skeleton-card {
+  pointer-events: none;
+}
+
+.skeleton-media {
+  height: 160px;
+}
+
+.skeleton-line {
+  height: 16px;
+}
+
+.skeleton-line--short {
+  width: 70%;
+}
+
+.skeleton-meta {
+  width: 35%;
+  height: 12px;
 }
 
 .admin-page h1,
@@ -781,6 +846,107 @@ button:disabled {
 
 .admin-list button {
   background: #2b3a45;
+}
+
+.admin-news-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.status-badge {
+  padding: 4px 8px;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  letter-spacing: 0.5px;
+  font-weight: 800;
+}
+
+.status-published {
+  background: rgba(23, 139, 62, 0.16);
+  color: #0f6b30;
+}
+
+.status-draft {
+  background: rgba(221, 125, 8, 0.16);
+  color: #a15c03;
+}
+
+.admin-list-filters {
+  display: grid;
+  grid-template-columns: 1fr 180px;
+  gap: 10px;
+}
+
+.media-library {
+  border: 1px dashed var(--line);
+  border-radius: 14px;
+  padding: 12px;
+  background: rgba(255, 255, 255, 0.6);
+}
+
+.media-library h3 {
+  margin: 0 0 10px;
+}
+
+.media-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(88px, 1fr));
+  gap: 8px;
+  max-height: 240px;
+  overflow: auto;
+}
+
+.media-item {
+  padding: 0;
+  border-radius: 10px;
+  border: 1px solid var(--line);
+  overflow: hidden;
+  background: #fff;
+}
+
+.media-item img {
+  width: 100%;
+  height: 72px;
+  object-fit: cover;
+  display: block;
+}
+
+.rich-editor {
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: #fff;
+}
+
+.rich-toolbar {
+  display: flex;
+  gap: 6px;
+  padding: 8px;
+  border-bottom: 1px solid var(--line);
+}
+
+.rich-toolbar button {
+  padding: 6px 10px;
+}
+
+.rich-editor__area {
+  min-height: 160px;
+  padding: 12px;
+  outline: none;
+}
+
+.push-button {
+  white-space: nowrap;
+}
+
+.push-status {
+  font-weight: 700;
+  font-size: 0.85rem;
+  background: rgba(255, 255, 255, 0.24);
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  padding: 8px 10px;
+  border-radius: 10px;
 }
 
 .sortable-list {
@@ -968,6 +1134,11 @@ button:disabled {
     min-width: 0;
   }
 
+  .push-button,
+  .push-status {
+    display: none;
+  }
+
   /* Make the three columns feel like an app header. */
   .top-left,
   .top-right {
@@ -1127,7 +1298,9 @@ button:disabled {
     top: 0;
     margin-top: 8px;
     left: 12px;
-    right: 12px;
+    right: auto;
+    width: calc(100% - 24px);
+    max-width: calc(100vw - 24px);
     z-index: 20;
     flex-direction: column;
     gap: 0;
@@ -1251,6 +1424,10 @@ button:disabled {
 
   .admin-list button {
     width: 100%;
+  }
+
+  .admin-list-filters {
+    grid-template-columns: 1fr;
   }
 
   .ap-picker {
@@ -1431,6 +1608,16 @@ button:disabled {
 
   to {
     transform: translateX(-50%);
+  }
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: 100% 0;
+  }
+
+  100% {
+    background-position: -100% 0;
   }
 }
 

@@ -4,6 +4,7 @@ import { BrowserRouter } from 'react-router-dom';
 import App from './App.jsx';
 import { LanguageProvider } from './contexts/LanguageContext.jsx';
 import { DateProvider } from './contexts/DateContext.jsx';
+import ErrorBoundary from './components/ErrorBoundary.jsx';
 import './styles/global.css';
 
 ReactDOM.createRoot(document.getElementById('root')).render(
@@ -11,7 +12,9 @@ ReactDOM.createRoot(document.getElementById('root')).render(
     <BrowserRouter>
       <LanguageProvider>
         <DateProvider>
-          <App />
+          <ErrorBoundary>
+            <App />
+          </ErrorBoundary>
         </DateProvider>
       </LanguageProvider>
     </BrowserRouter>

@@ -1,13 +1,12 @@
 import React from 'react';
-import { useLanguage } from '../contexts/LanguageContext.jsx';
+import { useTranslator } from '../i18n/useTranslator.js';
 
 const BreakingTicker = ({ items }) => {
-  const { language } = useLanguage();
+  const { language, t } = useTranslator();
   if (!items.length) return null;
-  const t = (en, te, hi = en) => (language === 'te' ? te : language === 'hi' ? hi : en);
   return (
     <div className="breaking-ticker">
-      <span className="ticker-label">{t('Breaking', 'బ్రేకింగ్', 'ब्रेकिंग')}</span>
+      <span className="ticker-label">{t('breakingTicker.label')}</span>
       <div className="ticker-track">
         <div className="ticker-content">
           {items.map((item) => (

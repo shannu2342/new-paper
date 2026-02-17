@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
 import { api } from '../services/api.js';
-import { useLanguage } from '../contexts/LanguageContext.jsx';
+import { useTranslator } from '../i18n/useTranslator.js';
 
 const fallback = {
   address: { en: 'Your address here', te: 'మీ చిరునామా ఇక్కడ' },
@@ -11,8 +10,7 @@ const fallback = {
 };
 
 const Footer = () => {
-  const { language } = useLanguage();
-  const t = (en, te, hi = en) => (language === 'te' ? te : language === 'hi' ? hi : en);
+  const { language, t } = useTranslator();
   const [settings, setSettings] = useState(fallback);
 
   useEffect(() => {
@@ -25,17 +23,17 @@ const Footer = () => {
   return (
     <footer className="site-footer">
       <div className="footer-block">
-        <h3>{t('Address', 'చిరునామా', 'पता')}</h3>
+        <h3>{t('footer.address')}</h3>
         <p>{settings.address?.[language] || settings.address?.en || settings.address?.te}</p>
       </div>
       <div className="footer-block">
-        <h3>{t('Contact', 'సంప్రదింపు', 'संपर्क')}</h3>
+        <h3>{t('footer.contact')}</h3>
         <p>{settings.contact?.[language] || settings.contact?.en || settings.contact?.te}</p>
         {settings.phone ? (
-          <p>{t('Phone', 'ఫోన్', 'फ़ोन')}: {settings.phone}</p>
+          <p>{t('footer.phone')}: {settings.phone}</p>
         ) : null}
         {settings.email ? (
-          <p>{t('Email', 'ఇమెయిల్', 'ईमेल')}: {settings.email}</p>
+          <p>{t('footer.email')}: {settings.email}</p>
         ) : null}
       </div>
       <div className="footer-bottom">
@@ -58,7 +56,6 @@ const Footer = () => {
             </svg>
           </a>
         </div>
-        <Link className="admin-link" to="/admin">Admin Login</Link>
       </div>
     </footer>
   );

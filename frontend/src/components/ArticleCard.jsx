@@ -5,14 +5,15 @@ import { useLanguage } from '../contexts/LanguageContext.jsx';
 const ArticleCard = ({ article }) => {
   const { language } = useLanguage();
   const title = article?.title?.[language] || article?.title?.en || article?.title?.te;
-  const summary = article?.summary?.[language] || article?.summary?.en || article?.summary?.te;
+  const rawSummary = article?.summary?.[language] || article?.summary?.en || article?.summary?.te;
+  const summary = rawSummary ? rawSummary.replace(/<[^>]*>/g, '').trim() : '';
   const cover = article?.images?.[0];
 
   return (
     <Link className="article-card" to={`/articles/${article._id}`}>
       {cover ? (
         <div className="article-card__media">
-          <img src={cover} alt={title} />
+          <img src={cover} alt={title} loading="lazy" decoding="async" />
         </div>
       ) : null}
       <div className="article-card__content">
