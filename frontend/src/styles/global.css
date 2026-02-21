@@ -597,6 +597,56 @@ textarea {
   box-shadow: var(--shadow);
 }
 
+.epaper-region-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 10px;
+  margin-top: 12px;
+}
+
+.epaper-region-button {
+  width: 100%;
+  text-align: center;
+}
+
+.epaper-region-button.active {
+  background: var(--accent-3);
+}
+
+.epaper-region-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 10px 12px;
+  border-radius: 10px;
+  background: #f6f9f2;
+  border: 1px solid var(--line);
+}
+
+.epaper-region-info {
+  display: grid;
+  gap: 6px;
+}
+
+.epaper-status {
+  width: fit-content;
+  padding: 2px 8px;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 700;
+}
+
+.epaper-status--uploaded {
+  background: rgba(23, 139, 62, 0.16);
+  color: #0f6b30;
+}
+
+.epaper-status--missing {
+  background: rgba(221, 125, 8, 0.16);
+  color: #a15c03;
+}
+
 .download-button,
 button {
   padding: 12px 18px;

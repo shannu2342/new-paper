@@ -26,6 +26,9 @@ const toKey = (value) =>
     .trim()
     .replace(/\s+/g, '-');
 
+const EPAPER_REGION_OPTIONS = [{ code: 'ALL', name: 'All' }, ...partitions];
+const normalizeRegionCode = (value) => (value || 'ALL').toString().trim().toUpperCase();
+
 const initialForm = (date) => ({
   title: { te: '', en: '' },
   content: { te: '', en: '' },
@@ -54,7 +57,9 @@ const AdminDashboard = ({ onLogout }) => {
   const [articleStatusFilter, setArticleStatusFilter] = useState('all');
   const [message, setMessage] = useState('');
   const [epaperDate, setEpaperDate] = useState(todayInput());
+  const [epaperRegionCode, setEpaperRegionCode] = useState('ALL');
   const [epaperUrls, setEpaperUrls] = useState({ teluguPdfUrl: '', englishPdfUrl: '' });
+  const [epaperItems, setEpaperItems] = useState([]);
   const [heroImages, setHeroImages] = useState([]);
   const [heroForm, setHeroForm] = useState({
     imageUrl: '',
@@ -130,6 +135,14 @@ const AdminDashboard = ({ onLogout }) => {
       );
   };
 
+  const loadEpapers = () => {
+    setEpaperItems([]);
+    return api
+      .get(`/epapers?date=${epaperDate}`)
+      .then((data) => setEpaperItems(Array.isArray(data) ? data : []))
+      .catch(() => setEpaperItems([]));
+  };
+
   useEffect(() => {
     loadMeta();
     loadHeroImages();
@@ -139,6 +152,10 @@ const AdminDashboard = ({ onLogout }) => {
   useEffect(() => {
     loadArticles();
   }, [date]);
+
+  useEffect(() => {
+    loadEpapers();
+  }, [epaperDate]);
 
   const filteredArticles = useMemo(() => {
     const q = articleSearch.toLowerCase().trim();
@@ -155,6 +172,18 @@ const AdminDashboard = ({ onLogout }) => {
     if (!q) return mediaItems;
     return mediaItems.filter((item) => item.name.toLowerCase().includes(q));
   }, [mediaItems, mediaSearch]);
+
+  const selectedRegionEpaper = useMemo(
+    () => epaperItems.find((item) => normalizeRegionCode(item.regionCode) === normalizeRegionCode(epaperRegionCode)) || null,
+    [epaperItems, epaperRegionCode]
+  );
+
+  useEffect(() => {
+    setEpaperUrls({
+      teluguPdfUrl: selectedRegionEpaper?.teluguPdfUrl || '',
+      englishPdfUrl: selectedRegionEpaper?.englishPdfUrl || ''
+    });
+  }, [selectedRegionEpaper, epaperRegionCode]);
 
   const handleUpload = async (file, type) => {
     const data = new FormData();
@@ -285,13 +314,47 @@ const AdminDashboard = ({ onLogout }) => {
     }
   };
 
+  const getEpaperDownloadUrl = (entry) => entry?.teluguPdfUrl || entry?.englishPdfUrl || '';
+
+  const triggerPdfDownload = (url) => {
+    if (!url) return;
+    const link = document.createElement('a');
+    link.href = url;
+    link.target = '_blank';
+    link.rel = 'noreferrer';
+    link.click();
+  };
+
+  const handleAdminEpaperDownload = (regionCode) => {
+    if (normalizeRegionCode(regionCode) === 'ALL') {
+      const urls = epaperItems
+        .map(getEpaperDownloadUrl)
+        .filter(Boolean)
+        .filter((url, index, arr) => arr.indexOf(url) === index);
+      urls.forEach((url) => triggerPdfDownload(url));
+      return;
+    }
+    const item = epaperItems.find((entry) => normalizeRegionCode(entry.regionCode) === normalizeRegionCode(regionCode));
+    triggerPdfDownload(getEpaperDownloadUrl(item));
+  };
+
   const handleEpaperSave = async () => {
+    if (!epaperUrls.teluguPdfUrl && !epaperUrls.englishPdfUrl) {
+      setMessage('Upload at least one PDF for selected region. (ఎంచుకున్న ప్రాంతానికి కనీసం ఒక PDF అప్‌లోడ్ చేయండి)');
+      return;
+    }
     await api.post(
       '/epapers',
-      { publishedAt: epaperDate, teluguPdfUrl: epaperUrls.teluguPdfUrl, englishPdfUrl: epaperUrls.englishPdfUrl },
+      {
+        publishedAt: epaperDate,
+        regionCode: normalizeRegionCode(epaperRegionCode),
+        teluguPdfUrl: epaperUrls.teluguPdfUrl || epaperUrls.englishPdfUrl,
+        englishPdfUrl: epaperUrls.englishPdfUrl
+      },
       authHeaders
     );
-    setMessage('E-paper saved. (ఇ-పేపర్ సేవ్ అయింది.)');
+    await loadEpapers();
+    setMessage('E-paper saved for selected region. (ఎంచుకున్న ప్రాంతానికి ఇ-పేపర్ సేవ్ అయింది.)');
   };
 
   const handleSiteSave = async () => {
@@ -546,6 +609,21 @@ const AdminDashboard = ({ onLogout }) => {
                   Date (తేదీ)
                   <input type="date" value={epaperDate} onChange={(e) => setEpaperDate(e.target.value)} />
                 </label>
+                <div className="epaper-region-grid">
+                  {EPAPER_REGION_OPTIONS.map((region) => {
+                    const regionCode = normalizeRegionCode(region.code);
+                    return (
+                      <button
+                        key={regionCode}
+                        type="button"
+                        className={`epaper-region-button ${normalizeRegionCode(epaperRegionCode) === regionCode ? 'active' : ''}`}
+                        onClick={() => setEpaperRegionCode(regionCode)}
+                      >
+                        {region.name}
+                      </button>
+                    );
+                  })}
+                </div>
                 <label>
                   Telugu PDF (తెలుగు PDF)
                   <input type="file" accept="application/pdf" onChange={(e) => handleEpaperUpload('teluguPdfUrl', e.target.files?.[0])} />
@@ -554,7 +632,33 @@ const AdminDashboard = ({ onLogout }) => {
                   English PDF (Optional) (ఆంగ్ల PDF ఐచ్ఛికం)
                   <input type="file" accept="application/pdf" onChange={(e) => handleEpaperUpload('englishPdfUrl', e.target.files?.[0])} />
                 </label>
-                <button type="button" onClick={handleEpaperSave}>Save (సేవ్ చేయండి)</button>
+                <div className="form-actions">
+                  <button type="button" onClick={handleEpaperSave}>Save (సేవ్ చేయండి)</button>
+                  <button type="button" className="secondary" disabled={!epaperItems.length} onClick={() => handleAdminEpaperDownload('ALL')}>
+                    Download All PDFs
+                  </button>
+                </div>
+                <div className="admin-list">
+                  <h3>Uploaded for {epaperDate}</h3>
+                  {EPAPER_REGION_OPTIONS.map((region) => {
+                    const regionCode = normalizeRegionCode(region.code);
+                    const item = epaperItems.find((entry) => normalizeRegionCode(entry.regionCode) === regionCode);
+                    const canDownload = Boolean(getEpaperDownloadUrl(item));
+                    return (
+                      <div key={regionCode} className="epaper-region-row">
+                        <div className="epaper-region-info">
+                          <span>{region.name}</span>
+                          <span className={`epaper-status ${canDownload ? 'epaper-status--uploaded' : 'epaper-status--missing'}`}>
+                            {canDownload ? 'Uploaded' : 'Not uploaded'}
+                          </span>
+                        </div>
+                        <button type="button" className="secondary" disabled={!canDownload} onClick={() => handleAdminEpaperDownload(regionCode)}>
+                          Download
+                        </button>
+                      </div>
+                    );
+                  })}
+                </div>
               </div>
             </section>
           ) : null}
