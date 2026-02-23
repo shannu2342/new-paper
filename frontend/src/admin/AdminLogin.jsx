@@ -41,9 +41,15 @@ const AdminLogin = ({ onSuccess }) => {
 
   const handleSeed = async () => {
     setError('');
+    const seedUsername = username.trim();
+    const seedPassword = password.trim();
+    if (!seedUsername || !seedPassword) {
+      setError(t('admin.seedRequiresInput'));
+      return;
+    }
     setSeeding(true);
     try {
-      const { token } = await authApi.seed({ username: 'admin', password: 'admin123' });
+      const { token } = await authApi.seed({ username: seedUsername, password: seedPassword });
       localStorage.setItem('admin-token', token);
       if (onSuccess) {
         onSuccess();

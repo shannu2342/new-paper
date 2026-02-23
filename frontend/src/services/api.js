@@ -35,11 +35,17 @@ export const api = {
 
 export const authApi = {
   login: (payload) => api.post('/auth/login', payload),
-  seed: (payload) => api.post('/auth/seed', payload)
+  seed: (payload) => api.post('/auth/seed', payload),
+  me: (options) => api.get('/auth/me', options)
 };
 
 export const notificationsApi = {
   publicKey: () => api.get('/notifications/public-key'),
   subscribe: (payload) => api.post('/notifications/subscribe', payload),
   broadcast: (payload, options) => api.post('/notifications/broadcast', payload, options)
+};
+
+export const analyticsApi = {
+  track: (payload) => api.post('/analytics/track', payload),
+  summary: (days = 30, options) => api.get(`/analytics/summary?days=${days}`, options)
 };

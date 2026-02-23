@@ -52,6 +52,10 @@ export const messages = {
     title: { en: 'E-Paper', te: 'ఇ-పేపర్', hi: 'ई-पेपर' },
     notFound: { en: 'No e-paper for this date.', te: 'ఈ తేదీకి ఇ-పేపర్ లేదు.', hi: 'इस तारीख के लिए ई-पेपर नहीं है।' },
     download: { en: 'Download', te: 'డౌన్‌లోడ్', hi: 'डाउनलोड' },
+    previousEditions: { en: 'Previous Editions', te: 'పాత సంచికలు', hi: 'पिछले संस्करण' },
+    showPrevious: { en: 'Show Previous', te: 'పాతవి చూపించు', hi: 'पिछले दिखाएँ' },
+    hidePrevious: { en: 'Hide Previous', te: 'పాతవి దాచు', hi: 'पिछले छुपाएँ' },
+    noPrevious: { en: 'No previous editions found.', te: 'పాత సంచికలు లభించలేదు.', hi: 'कोई पिछला संस्करण नहीं मिला।' },
     notAvailableForLang: {
       en: 'PDF not available in this language.',
       te: 'ఈ భాషలో PDF అందుబాటులో లేదు.',
@@ -66,6 +70,11 @@ export const messages = {
       en: 'Welcome to Greater Today',
       te: 'గ్రేటర్ టుడేకు స్వాగతం',
       hi: 'ग्रेटर टुडे में आपका स्वागत है'
+    },
+    noHeroConfigured: {
+      en: 'Hero slider image not configured yet',
+      te: 'హీరో స్లైడర్ చిత్రం ఇంకా సెటప్ కాలేదు',
+      hi: 'हीरो स्लाइडर छवि अभी कॉन्फ़िगर नहीं है'
     },
     readMore: { en: 'Read More', te: 'మరింత చదవండి', hi: 'और पढ़ें' }
   },
@@ -90,7 +99,8 @@ export const messages = {
     }
   },
   footer: {
-    address: { en: 'Address', te: 'చిరునామా', hi: 'पता' },
+    regdOffice: { en: 'Regd Office', te: 'నమోదిత కార్యాలయం', hi: 'पंजीकृत कार्यालय' },
+    stateOffice: { en: 'State Office', te: 'రాష్ట్ర కార్యాలయం', hi: 'राज्य कार्यालय' },
     contact: { en: 'Contact', te: 'సంప్రదింపు', hi: 'संपर्क' },
     phone: { en: 'Phone', te: 'ఫోన్', hi: 'फ़ोन' },
     email: { en: 'Email', te: 'ఇమెయిల్', hi: 'ईमेल' }
@@ -104,8 +114,13 @@ export const messages = {
     password: { en: 'Password', te: 'పాస్వర్డ్', hi: 'पासवर्ड' },
     login: { en: 'Login', te: 'లాగిన్', hi: 'लॉगिन' },
     pleaseWait: { en: 'Please wait...', te: 'దయచేసి వేచి ఉండండి...', hi: 'कृपया प्रतीक्षा करें...' },
-    createAdmin: { en: 'Create Admin (admin/admin123)', te: 'అడ్మిన్ సృష్టించు (admin/admin123)', hi: 'एडमिन बनाएं (admin/admin123)' },
+    createAdmin: { en: 'Create Admin (use entered credentials)', te: 'అడ్మిన్ సృష్టించు (ఇచ్చిన వివరాలు వాడండి)', hi: 'एडमिन बनाएं (दर्ज क्रेडेंशियल्स उपयोग करें)' },
     creatingAdmin: { en: 'Creating admin...', te: 'అడ్మిన్ సృష్టిస్తున్నాం...', hi: 'एडमिन बनाया जा रहा है...' },
+    seedRequiresInput: {
+      en: 'Enter username and password to create admin.',
+      te: 'అడ్మిన్ సృష్టించడానికి వినియోగదారు పేరు మరియు పాస్వర్డ్ ఇవ్వండి.',
+      hi: 'एडमिन बनाने के लिए यूज़रनेम और पासवर्ड दर्ज करें।'
+    },
     loginFailed: { en: 'Login failed.', te: 'లాగిన్ విఫలమైంది', hi: 'लॉगिन विफल हुआ।' },
     seedFailed: { en: 'Seed failed.', te: 'సీడ్ విఫలమైంది', hi: 'सीड विफल हुआ।' },
     apiNotReachable: {

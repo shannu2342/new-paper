@@ -37,9 +37,13 @@ const articleSchema = new mongoose.Schema(
     isFeatured: { type: Boolean, default: false },
     priority: { type: Number, default: 0 },
     enabled: { type: Boolean, default: true },
+    scheduledAt: { type: Date, index: true },
+    reviewedBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
+    reviewedAt: { type: Date },
+    rejectionReason: { type: String, trim: true, default: '' },
     status: {
       type: String,
-      enum: ['draft', 'published'],
+      enum: ['draft', 'pending_review', 'published', 'rejected'],
       default: 'published',
       index: true
     }

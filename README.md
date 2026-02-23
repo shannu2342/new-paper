@@ -18,6 +18,7 @@ Production-ready scaffold for an English-first newspaper website with Telugu sup
 ```bash
 cd backend
 cp .env.example .env
+# set ADMIN_USER and ADMIN_PASS in .env
 npm install
 npm run seed
 npm run seed:admin
@@ -32,11 +33,16 @@ npm install
 npm run dev
 ```
 
+### Frontend E2E (Playwright)
+```bash
+cd frontend
+npm run test:e2e
+```
+
 ## Admin Setup
 1. Seed the admin user (run once):
    - `npm run seed:admin`
-   - Default credentials: `admin / admin123`
-   - Override via env: `ADMIN_USER`, `ADMIN_PASS`
+   - Requires env: `ADMIN_USER`, `ADMIN_PASS`
 2. Use `/admin` in the frontend.
 
 ## MongoDB Collections

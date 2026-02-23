@@ -27,13 +27,10 @@ const HeroSlider = () => {
     return (
       <div className="hero-slider">
         <div className="slider-container">
-          <div
-            className="slider-slide active"
-            style={{ backgroundImage: "url('https://picsum.photos/seed/default-hero/1200/600.jpg')" }}
-          >
+          <div className="slider-slide active">
             <div className="slide-overlay" />
             <div className="slide-content">
-              <h2 className="slide-title">{t('heroSlider.welcomeTitle')}</h2>
+              <h2 className="slide-title">{t('heroSlider.noHeroConfigured')}</h2>
             </div>
           </div>
           <div className="slider-indicators">
@@ -52,7 +49,7 @@ const HeroSlider = () => {
             key={image._id}
             className={`slider-slide ${index === currentIndex ? 'active' : ''}`}
             style={{
-              backgroundImage: `url(${image.imageUrl || `https://picsum.photos/seed/hero-${index}/1200/600.jpg`})`
+              backgroundImage: image.imageUrl ? `url(${image.imageUrl})` : 'none'
             }}
           >
             <div className="slide-overlay" />

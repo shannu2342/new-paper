@@ -3,7 +3,14 @@ import { api } from '../services/api.js';
 import { useTranslator } from '../i18n/useTranslator.js';
 
 const fallback = {
-  address: { en: 'Your address here', te: 'మీ చిరునామా ఇక్కడ' },
+  regdOffice: {
+    en: '#31-27-31/1, Kurmanapalem, Vadlapudi (Post), Visakhapatnam, Andhra Pradesh - 530046',
+    te: '#31-27-31/1, Kurmanapalem, Vadlapudi (Post), Visakhapatnam, Andhra Pradesh - 530046'
+  },
+  stateOffice: {
+    en: 'DNo: 26-3-134, Gandhinarar, NRP Road, Vijayawada, NTR Dist., Amaravati, Andhra Pradesh - 520003',
+    te: 'DNo: 26-3-134, Gandhinarar, NRP Road, Vijayawada, NTR Dist., Amaravati, Andhra Pradesh - 520003'
+  },
   contact: { en: 'Contact details', te: 'సంప్రదింపు వివరాలు' },
   phone: '',
   email: ''
@@ -23,8 +30,12 @@ const Footer = () => {
   return (
     <footer className="site-footer">
       <div className="footer-block">
-        <h3>{t('footer.address')}</h3>
-        <p>{settings.address?.[language] || settings.address?.en || settings.address?.te}</p>
+        <h3>{t('footer.regdOffice')}</h3>
+        <p>{settings.regdOffice?.[language] || settings.regdOffice?.en || settings.regdOffice?.te}</p>
+      </div>
+      <div className="footer-block">
+        <h3>{t('footer.stateOffice')}</h3>
+        <p>{settings.stateOffice?.[language] || settings.stateOffice?.en || settings.stateOffice?.te}</p>
       </div>
       <div className="footer-block">
         <h3>{t('footer.contact')}</h3>
@@ -38,7 +49,6 @@ const Footer = () => {
       </div>
       <div className="footer-bottom">
         <span>© 2026 Telugu-First News. All Rights Reserved.</span>
-        <span className="footer-meta">Regd No. 55/2021 · Vijayawada, Andhra Pradesh</span>
         <div className="footer-social">
           <a className="social-icon" href="#" aria-label="Facebook" title="Facebook">
             <svg viewBox="0 0 24 24" aria-hidden="true">

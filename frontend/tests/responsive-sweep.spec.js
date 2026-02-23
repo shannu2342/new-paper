@@ -1,6 +1,6 @@
 import { test } from '@playwright/test';
 
-const baseURL = 'http://127.0.0.1:4173';
+const baseURL = process.env.PLAYWRIGHT_BASE_URL || 'http://127.0.0.1:4173';
 const routes = ['/', '/ap', '/other', '/special', '/epaper', '/admin/login'];
 const viewports = [
   { name: 'mobile', width: 360, height: 800 },

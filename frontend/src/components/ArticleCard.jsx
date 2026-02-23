@@ -13,7 +13,7 @@ const ArticleCard = ({ article }) => {
     <Link className="article-card" to={`/articles/${article._id}`}>
       {cover ? (
         <div className="article-card__media">
-          <img src={cover} alt={title} loading="lazy" decoding="async" />
+          <img src={cover} alt={title} loading="lazy" decoding="async" sizes="(max-width: 768px) 100vw, 320px" />
         </div>
       ) : null}
       <div className="article-card__content">

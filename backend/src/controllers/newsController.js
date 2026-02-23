@@ -2,7 +2,7 @@ const Article = require('../models/Article');
 const { toDateKey } = require('../utils/dateKey');
 
 const listNews = async (req, res) => {
-  const { section, partition, district, date, isBreaking, isFeatured, limit, categoryType, otherCategoryKey } = req.query;
+  const { section, partition, district, date, isBreaking, isFeatured, limit, categoryType, otherCategoryKey, q } = req.query;
   const query = {};
 
   if (section) {
@@ -30,6 +30,30 @@ const listNews = async (req, res) => {
   }
   if (isFeatured === 'true') {
     query.isFeatured = true;
+  }
+  query.$and = [
+    {
+      $or: [
+        { status: 'published' },
+        { status: { $exists: false } }
+      ]
+    },
+    {
+      $or: [
+        { scheduledAt: { $exists: false } },
+        { scheduledAt: null },
+        { scheduledAt: { $lte: new Date() } }
+      ]
+    }
+  ];
+  if (q) {
+    const regex = new RegExp(String(q).trim().replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'i');
+    query.$or = [
+      { 'title.en': regex },
+      { 'title.te': regex },
+      { 'summary.en': regex },
+      { 'summary.te': regex }
+    ];
   }
 
   const news = await Article.find(query)

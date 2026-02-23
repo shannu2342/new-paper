@@ -5,8 +5,14 @@ const User = require('../models/User');
 
 const run = async () => {
   await connectDb(process.env.MONGODB_URI);
-  const username = process.env.ADMIN_USER || 'admin';
-  const password = process.env.ADMIN_PASS || 'admin123';
+  const username = process.env.ADMIN_USER;
+  const password = process.env.ADMIN_PASS;
+  const role = process.env.ADMIN_ROLE || 'super_admin';
+
+  if (!username || !password) {
+    console.error('Missing ADMIN_USER or ADMIN_PASS in environment');
+    process.exit(1);
+  }
 
   const existing = await User.findOne({ username });
   if (existing) {
@@ -15,7 +21,7 @@ const run = async () => {
   }
 
   const passwordHash = await bcrypt.hash(password, 10);
-  await User.create({ username, passwordHash, role: 'admin' });
+  await User.create({ username, passwordHash, role });
   console.log('Seeded admin user:', username);
   process.exit(0);
 };

@@ -8,7 +8,7 @@ const signToken = (user) =>
   });
 
 const seedAdmin = async (req, res) => {
-  const { username, password } = req.body;
+  const { username, password, role } = req.body;
   if (!username || !password) {
     return res.status(400).json({ message: 'Username and password required' });
   }
@@ -16,10 +16,12 @@ const seedAdmin = async (req, res) => {
   if (existing) {
     return res.status(400).json({ message: 'Admin already exists' });
   }
+  const allowedRoles = ['editor', 'publisher', 'admin', 'super_admin'];
+  const normalizedRole = allowedRoles.includes(role) ? role : 'super_admin';
   const passwordHash = await bcrypt.hash(password, 10);
-  const user = await User.create({ username, passwordHash, role: 'admin' });
+  const user = await User.create({ username, passwordHash, role: normalizedRole });
   const token = signToken(user);
-  return res.json({ token });
+  return res.json({ token, user: { username: user.username, role: user.role } });
 };
 
 const login = async (req, res) => {
@@ -36,7 +38,15 @@ const login = async (req, res) => {
     return res.status(401).json({ message: 'Invalid credentials' });
   }
   const token = signToken(user);
-  return res.json({ token });
+  return res.json({ token, user: { username: user.username, role: user.role } });
 };
 
-module.exports = { seedAdmin, login };
+const me = async (req, res) => {
+  const user = await User.findById(req.user.id).select('username role');
+  if (!user) {
+    return res.status(404).json({ message: 'User not found' });
+  }
+  return res.json(user);
+};
+
+module.exports = { seedAdmin, login, me };

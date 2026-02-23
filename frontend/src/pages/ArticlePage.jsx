@@ -49,7 +49,7 @@ const ArticlePage = () => {
         {article.images?.length ? (
           <div className="article-gallery">
             {article.images.map((img) => (
-              <img key={img} src={img} alt={title} loading="lazy" decoding="async" />
+              <img key={img} src={img} alt={title} loading="lazy" decoding="async" sizes="(max-width: 768px) 100vw, 50vw" />
             ))}
           </div>
         ) : null}

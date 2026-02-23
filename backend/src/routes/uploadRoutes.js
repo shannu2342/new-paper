@@ -3,6 +3,7 @@ const multer = require('multer');
 const path = require('path');
 const fs = require('fs');
 const { requireAuth } = require('../middleware/auth');
+const { rateLimit } = require('../middleware/rateLimit');
 
 const router = express.Router();
 
@@ -19,7 +20,44 @@ const storage = multer.diskStorage({
   }
 });
 
-const upload = multer({ storage });
+const IMAGE_MIME_TYPES = ['image/jpeg', 'image/png', 'image/webp', 'image/avif', 'image/gif', 'image/svg+xml'];
+const PDF_MIME_TYPES = ['application/pdf'];
+const IMAGE_EXT = /\.(png|jpe?g|webp|avif|gif|svg)$/i;
+const PDF_EXT = /\.pdf$/i;
+
+const imageUpload = multer({
+  storage,
+  limits: { fileSize: Number(process.env.IMAGE_UPLOAD_MAX_BYTES || 8 * 1024 * 1024) },
+  fileFilter: (req, file, cb) => {
+    const validMime = IMAGE_MIME_TYPES.includes(file.mimetype);
+    const validExt = IMAGE_EXT.test(file.originalname || '');
+    if (!validMime || !validExt) {
+      return cb(new Error('Invalid image file type'));
+    }
+    return cb(null, true);
+  }
+});
+
+const pdfUpload = multer({
+  storage,
+  limits: { fileSize: Number(process.env.PDF_UPLOAD_MAX_BYTES || 25 * 1024 * 1024) },
+  fileFilter: (req, file, cb) => {
+    const validMime = PDF_MIME_TYPES.includes(file.mimetype);
+    const validExt = PDF_EXT.test(file.originalname || '');
+    if (!validMime || !validExt) {
+      return cb(new Error('Invalid PDF file type'));
+    }
+    return cb(null, true);
+  }
+});
+
+const handleUploadError = (err, res) => {
+  if (!err) return false;
+  if (err instanceof multer.MulterError && err.code === 'LIMIT_FILE_SIZE') {
+    return res.status(400).json({ message: 'File too large for upload' });
+  }
+  return res.status(400).json({ message: err.message || 'Upload failed' });
+};
 
 router.get('/files', requireAuth, (req, res) => {
   const baseUrl = `${req.protocol}://${req.get('host')}`;
@@ -38,18 +76,24 @@ router.get('/files', requireAuth, (req, res) => {
   });
 });
 
-router.post('/image', requireAuth, upload.single('file'), (req, res) => {
-  if (!req.file) {
-    return res.status(400).json({ message: 'No file uploaded' });
-  }
-  return res.json({ url: `/uploads/${req.file.filename}` });
+router.post('/image', requireAuth, rateLimit({ windowMs: 60_000, max: 30 }), (req, res) => {
+  imageUpload.single('file')(req, res, (err) => {
+    if (handleUploadError(err, res)) return;
+    if (!req.file) {
+      return res.status(400).json({ message: 'No file uploaded' });
+    }
+    return res.json({ url: `/uploads/${req.file.filename}` });
+  });
 });
 
-router.post('/pdf', requireAuth, upload.single('file'), (req, res) => {
-  if (!req.file) {
-    return res.status(400).json({ message: 'No file uploaded' });
-  }
-  return res.json({ url: `/uploads/${req.file.filename}` });
+router.post('/pdf', requireAuth, rateLimit({ windowMs: 60_000, max: 20 }), (req, res) => {
+  pdfUpload.single('file')(req, res, (err) => {
+    if (handleUploadError(err, res)) return;
+    if (!req.file) {
+      return res.status(400).json({ message: 'No file uploaded' });
+    }
+    return res.json({ url: `/uploads/${req.file.filename}` });
+  });
 });
 
 module.exports = router;

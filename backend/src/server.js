@@ -19,6 +19,7 @@ const siteSettingRoutes = require('./routes/siteSettingRoutes');
 const newsRoutes = require('./routes/newsRoutes');
 const heroImageRoutes = require('./routes/heroImageRoutes');
 const notificationRoutes = require('./routes/notificationRoutes');
+const analyticsRoutes = require('./routes/analyticsRoutes');
 
 const app = express();
 
@@ -31,7 +32,20 @@ const uploadPath = path.resolve(uploadDir);
 if (!fs.existsSync(uploadPath)) {
   fs.mkdirSync(uploadPath, { recursive: true });
 }
-app.use('/uploads', express.static(uploadPath));
+app.use(
+  '/uploads',
+  express.static(uploadPath, {
+    etag: true,
+    maxAge: '7d',
+    setHeaders: (res, filePath) => {
+      if (/\.(png|jpe?g|webp|avif|gif|svg)$/i.test(filePath)) {
+        res.setHeader('Cache-Control', 'public, max-age=604800');
+      } else if (/\.pdf$/i.test(filePath)) {
+        res.setHeader('Cache-Control', 'public, max-age=86400');
+      }
+    }
+  })
+);
 
 app.get('/api/health', (req, res) => {
   res.json({ status: 'ok' });
@@ -50,6 +64,7 @@ app.use('/api/site-settings', siteSettingRoutes);
 app.use('/api/news', newsRoutes);
 app.use('/api/hero-images', heroImageRoutes);
 app.use('/api/notifications', notificationRoutes);
+app.use('/api/analytics', analyticsRoutes);
 
 const port = process.env.PORT || 4000;
 

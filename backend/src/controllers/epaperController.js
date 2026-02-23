@@ -7,15 +7,20 @@ const normalizeRegionCode = (value) => {
 };
 
 const listEpapers = async (req, res) => {
-  const { date, region } = req.query;
+  const { date, region, before, limit } = req.query;
   const query = {};
   if (date) {
     query.dateKey = toDateKey(date);
   }
+  if (before) {
+    query.dateKey = { ...(query.dateKey || {}), $lt: toDateKey(before) };
+  }
   if (region) {
     query.regionCode = normalizeRegionCode(region);
   }
-  const epapers = await Epaper.find(query).sort({ publishedAt: -1 });
+  const epapers = await Epaper.find(query)
+    .sort({ dateKey: -1, publishedAt: -1 })
+    .limit(limit ? Number(limit) : 0);
   return res.json(epapers);
 };
 

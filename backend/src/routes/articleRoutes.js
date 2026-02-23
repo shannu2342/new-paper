@@ -4,16 +4,18 @@ const {
   getArticle,
   createArticle,
   updateArticle,
-  deleteArticle
+  deleteArticle,
+  reviewArticle
 } = require('../controllers/articleController');
-const { requireAuth } = require('../middleware/auth');
+const { requireAuth, requireRole } = require('../middleware/auth');
 
 const router = express.Router();
 
 router.get('/', listArticles);
 router.get('/:id', getArticle);
-router.post('/', requireAuth, createArticle);
-router.put('/:id', requireAuth, updateArticle);
-router.delete('/:id', requireAuth, deleteArticle);
+router.post('/', requireAuth, requireRole('editor', 'publisher', 'admin', 'super_admin'), createArticle);
+router.put('/:id', requireAuth, requireRole('editor', 'publisher', 'admin', 'super_admin'), updateArticle);
+router.post('/:id/review', requireAuth, requireRole('publisher', 'admin', 'super_admin'), reviewArticle);
+router.delete('/:id', requireAuth, requireRole('admin', 'super_admin'), deleteArticle);
 
 module.exports = router;

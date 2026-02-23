@@ -7,8 +7,7 @@ const heroImageSchema = new mongoose.Schema(
         title: {
             type: {
                 en: { type: String, required: true },
-                te: { type: String, required: true },
-                hi: { type: String, required: true }
+                te: { type: String, required: true }
             },
             required: true
         },
