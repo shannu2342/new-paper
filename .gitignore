@@ -1,0 +1,34 @@
+# Local/server secrets
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*service-account*.json
+*firebase*.json
+google-services.json
+GoogleService-Info.plist
+.secrets/
+
+# Dependencies and generated output
+node_modules/
+dist/
+admin-dist/
+*-dist/
+build/
+.next/
+out/
+coverage/
+.cache/
+.turbo/
+.vite/
+
+# Runtime data
+logs/
+log/
+*.log
+uploads/
+storage/
+tmp/
+temp/
+.DS_Store
